@@ -1,0 +1,66 @@
+# HTTP 
+## HTTP 缓存
+
+> 原文：[彻底理解浏览器的缓存机制](https://juejin.cn/post/6844903593275817998)  
+> 原文：[彻底弄懂强缓存与协商缓存](https://www.jianshu.com/p/9c95db596df5)
+
+### 强缓存
+
+Response Header 设置 Cache-Control 和 Expires  
+优先级：Cache-Control > Expires
+
+#### Expires(HTTP1.0)：
+
+缓存的到期时间，若请求时间小于该时间，则直接使用缓存结果。
+使用时间比较缺点：若客户端与服务端的时间由于时区或其他原因不一致，则缓存直接失效
+
+#### Cache-Control(HTTP1.1,目前浏览器)：
+
+- public：所有内容都将被缓存（客户端和代理服务器都可缓存）
+- private(默认)：所有内容仅客户端可缓存
+- no-cache：客户端缓存内容，通过协商缓存来决定是否缓存
+- no-store：不强制缓存，也不协商缓存
+- max-age=xxx ：缓存内容将在本次请求 xxx 秒后失效，xxx 秒内强制缓存生效
+
+#### 从 NetWork 中的 size 可查看缓存是否生效以及位置：
+
+**from memory cache** 内存缓存  
+特点：将编译解析后的文件（如：js 和图片）存在该进程的内存中，方便下次快速读取，进程关闭，内存清空。
+
+**from disk cache** 硬盘缓存  
+特点：需要对该缓存存放的硬盘文件进行 I/O 操作，然后重新解析内容（如：css），读取复杂，速度比内存缓存慢。
+
+> 浏览器读取缓存的顺序：memory –> disk。
+
+### 协商缓存
+
+当强缓存失效或未设置时，进入协商缓存流程
+
+1. 协商缓存生效，返回 304
+1. 协商缓存失效，返回 200 和请求结果
+
+控制协商缓存的字段分别有：  
+Etag / If-None-Match 和 Last-Modified / If-Modified-Since  
+优先级：Etag / If-None-Match > Last-Modified / If-Modified-Since
+
+#### Last-Modified / If-Modified-Since
+
+Last-Modified: response header 设置，表示：该资源文件在服务器最后被修改的时间。  
+If-Modified-Since：request header 设置，上次请求响应中的 Last-Modified  
+服务端将两者对比后决定返回 200 或 304
+
+#### Etag / If-None-Match
+
+Etag：资源文件的一个唯一标识(由服务器生成) response header 设置  
+If-None-Match：上一个 Etag，request header 设置  
+服务端将两者对比，一致则返回 304，不一致则返回 200，和新的资源
+
+#### 为什么要有 etag？
+
+你可能会觉得使用 last-modified 已经足以让浏览器知道本地的缓存副本是否足够新，为什么还需要 etag 呢？HTTP1.1 中 etag 的出现（也就是说，etag 是新增的，为了解决之前只有 If-Modified 的缺点）主要是为了解决几个 last-modified 比较难解决的问题：
+
+一些文件也许会周期性的更改，但是他的内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新 get；
+
+某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说 1s 内修改了 N 次)，if-modified-since 能检查到的粒度是秒级的，这种修改无法判断(或者说 UNIX 记录 MTIME 只能精确到秒)；
+
+某些服务器不能精确的得到文件的最后修改时间。

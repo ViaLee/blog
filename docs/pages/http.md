@@ -1,4 +1,5 @@
-# HTTP 
+# HTTP
+
 ## HTTP 缓存
 
 > 原文：[彻底理解浏览器的缓存机制](https://juejin.cn/post/6844903593275817998)  
@@ -64,3 +65,23 @@ If-None-Match：上一个 Etag，request header 设置
 某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说 1s 内修改了 N 次)，if-modified-since 能检查到的粒度是秒级的，这种修改无法判断(或者说 UNIX 记录 MTIME 只能精确到秒)；
 
 某些服务器不能精确的得到文件的最后修改时间。
+
+## HTTP 协议
+
+### 协议升级机制
+
+由客户端发起，将一个**已建立**的**http1.1**连接升级成新的、不相容的连接，只能由 http1.1 升级到 http2 或 ws  
+>http2不支持连接升级机制，不支持101状态码
+
+#### 配置**Request Header**：
+
+Connextion：Upgrade  
+Upgrade: 协议/版本(如：websocket、http/2)  
+若服务端同意升级本次连接，则返回101，header携带Upgrade：协议  
+upgrade-insecure-requests：1 表示支持升级机制
+
+```js
+// 将站点的所有url替换成https的url
+// 非跳转(non-navigational)的不安全资源请求会自动升级到HTTPS
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+```

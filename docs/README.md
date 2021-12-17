@@ -2,7 +2,7 @@
 home: true
 heroImage: /babe.png
 heroText: Via
-tagline: 前端学习博客
+tagline: 虚怀若谷
 actionText: 开始学习
 actionLink: /pages/javascript
 # features:

@@ -29,8 +29,18 @@ module.exports = {
         {
           text: "HTTP",
           link: "/pages/http",
+        },
+        {
+          text: "安全",
+          link: "/pages/security",
         }
-      ] },
+      ]},
+      // { text: "工程化",items: [
+      //   {
+      //     text: "HTTP",
+      //     link: "/pages/http",
+      //   }
+      // ]},
       { text: "面试", link: "/pages/interview" },
     ],
     search: false,

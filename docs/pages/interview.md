@@ -1,4 +1,4 @@
-## miHoYo
+### miHoYo
 
 #### [HTTP 缓存](/pages/http.html#HTTP缓存)
 

@@ -2,7 +2,8 @@
 
 #### script 标签
 
-六属性：async(异步脚本) charset defer(延迟脚本) language src type(MIME 类型)
+六属性：async(异步脚本) charset defer(延迟脚本) language src type(MIME 类型)  
+defer:这个布尔属性被设定用来通知浏览器该脚本将在文档完成解析后，触发 DOMContentLoaded (en-US) 事件前执行。有 defer 属性的脚本会阻止 DOMContentLoaded 事件，直到脚本被加载并且解析完成。
 
 #### 作用域扩展
 
@@ -108,4 +109,20 @@ Promise.reject("error")
 // 结果：
 // error
 // success2
+```
+
+## 数据处理
+
+数组去除空值
+
+```js
+const arr = [1, 2, 0, undefined, 11, "12", null];
+
+console.log(arr.filter((i) => i)); //  [1, 2, 11, '12']
+```
+
+对象数组根据某一属性去重  
+```js
+let amap = new Map();
+data = data.filter((a) => !amap.has(a.value) && amap.set(a.value, 1));
 ```

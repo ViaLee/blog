@@ -1,10 +1,6 @@
 # HTTP
 
 ## HTTP 缓存
-
-> 原文：[彻底理解浏览器的缓存机制](https://juejin.cn/post/6844903593275817998)  
-> 原文：[彻底弄懂强缓存与协商缓存](https://www.jianshu.com/p/9c95db596df5)
-
 ### 强缓存
 
 Response Header 设置 Cache-Control 和 Expires  
@@ -85,3 +81,6 @@ upgrade-insecure-requests：1 表示支持升级机制
 // 非跳转(non-navigational)的不安全资源请求会自动升级到HTTPS
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 ```
+
+> 参考：[彻底理解浏览器的缓存机制](https://juejin.cn/post/6844903593275817998)  
+> 参考：[彻底弄懂强缓存与协商缓存](https://www.jianshu.com/p/9c95db596df5)

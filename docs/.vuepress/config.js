@@ -2,11 +2,11 @@ module.exports = {
   lang: "zh-CN",
   title: "💫Viaのblog",
   // description: "这是我的第一个 VuePress 站点",
+  head: [
+    ['link', { rel: 'icon', href: '/babe.png' }]
+  ],
   themeConfig: {
     logo: "/babe.png",
-    head: [
-      ['link', { rel: 'icon', href: '/babe.png' }]
-    ],
     nav: [
       {
         text: "前端",

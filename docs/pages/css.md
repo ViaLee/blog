@@ -34,3 +34,10 @@ flex: 2 2 10%;
 
 1em: 是父元素或本身 font-size，向上找
 rem: 根元素 font-size
+
+
+### touch-action
+可以使用css属性 `touch-action` 来完全消除事件处理器的影响，如：
+#area { 
+  touch-action: pan-x; 
+}

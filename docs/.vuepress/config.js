@@ -2,9 +2,7 @@ module.exports = {
   lang: "zh-CN",
   title: "💫Viaのblog",
   // description: "这是我的第一个 VuePress 站点",
-  head: [
-    ['link', { rel: 'icon', href: '/babe.png' }]
-  ],
+  head: [["link", { rel: "icon", href: "/babe.png" }]],
   themeConfig: {
     logo: "/babe.png",
     nav: [
@@ -25,22 +23,28 @@ module.exports = {
           },
         ],
       },
-      { text: "网络",items: [
-        {
-          text: "HTTP",
-          link: "/pages/http",
-        },
-        {
-          text: "安全",
-          link: "/pages/security",
-        }
-      ]},
-      // { text: "工程化",items: [
-      //   {
-      //     text: "HTTP",
-      //     link: "/pages/http",
-      //   }
-      // ]},
+      {
+        text: "网络",
+        items: [
+          {
+            text: "HTTP",
+            link: "/pages/http",
+          },
+          {
+            text: "安全",
+            link: "/pages/security",
+          },
+        ],
+      },
+      {
+        text: "原理",
+        items: [
+          {
+            text: "浏览器",
+            link: "/pages/browser",
+          },
+        ],
+      },
       { text: "面试", link: "/pages/interview" },
     ],
     search: false,

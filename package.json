@@ -7,13 +7,15 @@
   "scripts": {
     "start": "vuepress dev docs",
     "build": "vuepress build docs",
-    "test":"jest"
+    "test": "jest"
   },
   "license": "MIT",
   "devDependencies": {
     "vuepress": "^1.0.0"
   },
   "dependencies": {
+    "@vssue/api-github-v3": "^1.4.7",
+    "@vssue/vuepress-plugin-vssue": "^1.4.8",
     "@vuepress/theme-default": "^1.8.2"
   }
 }

@@ -1,6 +1,7 @@
 # HTTP
 
 ## HTTP 缓存
+
 ### 强缓存
 
 Response Header 设置 Cache-Control 和 Expires  
@@ -56,24 +57,25 @@ If-None-Match：上一个 Etag，request header 设置
 
 你可能会觉得使用 last-modified 已经足以让浏览器知道本地的缓存副本是否足够新，为什么还需要 etag 呢？HTTP1.1 中 etag 的出现（也就是说，etag 是新增的，为了解决之前只有 If-Modified 的缺点）主要是为了解决几个 last-modified 比较难解决的问题：
 
-一些文件也许会周期性的更改，但是他的内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新 get；
+1. 一些文件也许会周期性的更改，但是他的内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新 get；
 
-某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说 1s 内修改了 N 次)，if-modified-since 能检查到的粒度是秒级的，这种修改无法判断(或者说 UNIX 记录 MTIME 只能精确到秒)；
+2. 某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说 1s 内修改了 N 次)，if-modified-since 能检查到的粒度是秒级的，这种修改无法判断(或者说 UNIX 记录 MTIME 只能精确到秒)；
 
-某些服务器不能精确的得到文件的最后修改时间。
+3. 某些服务器不能精确的得到文件的最后修改时间。
 
 ## HTTP 协议
 
 ### 协议升级机制
 
-由客户端发起，将一个**已建立**的**http1.1**连接升级成新的、不相容的连接，只能由 http1.1 升级到 http2 或 ws  
->http2不支持连接升级机制，不支持101状态码
+由客户端发起，将一个**已建立**的**http1.1**连接升级成新的、不相容的连接，只能由 http1.1 升级到 http2 或 ws
+
+> http2 不支持连接升级机制，不支持 101 状态码
 
 #### 配置**Request Header**：
 
 Connextion：Upgrade  
 Upgrade: 协议/版本(如：websocket、http/2)  
-若服务端同意升级本次连接，则返回101，header携带Upgrade：协议  
+若服务端同意升级本次连接，则返回 101，header 携带 Upgrade：协议  
 upgrade-insecure-requests：1 表示支持升级机制
 
 ```js
@@ -81,6 +83,14 @@ upgrade-insecure-requests：1 表示支持升级机制
 // 非跳转(non-navigational)的不安全资源请求会自动升级到HTTPS
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 ```
+
+### TCP 协议
+
+为什么是三次握手？  
+在谢希仁著《计算机网络》第四版中讲“三次握手”的目的是“为了防止已失效的连接请求报文段突然又传送到了服务端，因而产生错误”。  
+《计算机网络》一书中讲“三次握手”的目的是为了解决“网络中存在延迟的重复分组”的问题。  
+通信双方需要就某个问题达成一致。而要解决这个问题, 无论你在消息中包含什么信息, 三次通信是理论上建立可靠传输的最小值。  
+如果两次就建立，会浪费server的资源。
 
 > 参考：[彻底理解浏览器的缓存机制](https://juejin.cn/post/6844903593275817998)  
 > 参考：[彻底弄懂强缓存与协商缓存](https://www.jianshu.com/p/9c95db596df5)

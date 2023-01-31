@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>node 全局变量 的运行过程 | 💫Viaのblog</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/babe.png">
+    <meta name="description" content="">
+    
+    <link rel="preload" href="/assets/css/0.styles.a509abab.css" as="style"><link rel="preload" href="/assets/js/app.6a1e7b57.js" as="script"><link rel="preload" href="/assets/js/2.f7f94fda.js" as="script"><link rel="preload" href="/assets/js/10.94991a2c.js" as="script"><link rel="prefetch" href="/assets/js/11.dc2a681f.js"><link rel="prefetch" href="/assets/js/12.8ba7a12f.js"><link rel="prefetch" href="/assets/js/13.515533ed.js"><link rel="prefetch" href="/assets/js/14.45f6d6ea.js"><link rel="prefetch" href="/assets/js/15.a540c83c.js"><link rel="prefetch" href="/assets/js/16.01649045.js"><link rel="prefetch" href="/assets/js/17.49ac8e1a.js"><link rel="prefetch" href="/assets/js/18.2fc85019.js"><link rel="prefetch" href="/assets/js/19.eab16a2f.js"><link rel="prefetch" href="/assets/js/20.656e1424.js"><link rel="prefetch" href="/assets/js/21.d475564f.js"><link rel="prefetch" href="/assets/js/22.fbce710a.js"><link rel="prefetch" href="/assets/js/23.0e11ca0d.js"><link rel="prefetch" href="/assets/js/3.36e6c52f.js"><link rel="prefetch" href="/assets/js/4.dbbfc7ac.js"><link rel="prefetch" href="/assets/js/5.1efdb115.js"><link rel="prefetch" href="/assets/js/6.6feef2bf.js"><link rel="prefetch" href="/assets/js/7.4b590157.js"><link rel="prefetch" href="/assets/js/8.74f87bb3.js"><link rel="prefetch" href="/assets/js/9.623af976.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.a509abab.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/babe.png" alt="💫Viaのblog" class="logo"> <span class="site-name can-hide">💫Viaのblog</span></a> <div class="links"><!----> <nav class="nav-links can-hide"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Basic 🐳" class="dropdown-title"><span class="title">Basic 🐳</span> <span class="arrow down"></span></button> <button type="button" aria-label="Basic 🐳" class="mobile-dropdown-title"><span class="title">Basic 🐳</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/javascript.html" class="nav-link">
+  JS
+</a></li><li class="dropdown-item"><!----> <a href="/pages/react.html" class="nav-link">
+  React
+</a></li><li class="dropdown-item"><!----> <a href="/pages/css.html" class="nav-link">
+  CSS
+</a></li><li class="dropdown-item"><!----> <a href="/pages/webpack.html" class="nav-link">
+  Webpack
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Web 🌏" class="dropdown-title"><span class="title">Web 🌏</span> <span class="arrow down"></span></button> <button type="button" aria-label="Web 🌏" class="mobile-dropdown-title"><span class="title">Web 🌏</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/http.html" class="nav-link">
+  HTTP
+</a></li><li class="dropdown-item"><!----> <a href="/pages/security.html" class="nav-link">
+  安全
+</a></li><li class="dropdown-item"><!----> <a href="/pages/browser.html" class="nav-link">
+  浏览器
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Blog ✍🏻" class="dropdown-title"><span class="title">Blog ✍🏻</span> <span class="arrow down"></span></button> <button type="button" aria-label="Blog ✍🏻" class="mobile-dropdown-title"><span class="title">Blog ✍🏻</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/interview.html" class="nav-link">
+  面试 📖
+</a></li><li class="dropdown-item"><!----> <a href="/pages/blog.html" class="nav-link">
+  博客 ✍🏻
+</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Basic 🐳" class="dropdown-title"><span class="title">Basic 🐳</span> <span class="arrow down"></span></button> <button type="button" aria-label="Basic 🐳" class="mobile-dropdown-title"><span class="title">Basic 🐳</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/javascript.html" class="nav-link">
+  JS
+</a></li><li class="dropdown-item"><!----> <a href="/pages/react.html" class="nav-link">
+  React
+</a></li><li class="dropdown-item"><!----> <a href="/pages/css.html" class="nav-link">
+  CSS
+</a></li><li class="dropdown-item"><!----> <a href="/pages/webpack.html" class="nav-link">
+  Webpack
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Web 🌏" class="dropdown-title"><span class="title">Web 🌏</span> <span class="arrow down"></span></button> <button type="button" aria-label="Web 🌏" class="mobile-dropdown-title"><span class="title">Web 🌏</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/http.html" class="nav-link">
+  HTTP
+</a></li><li class="dropdown-item"><!----> <a href="/pages/security.html" class="nav-link">
+  安全
+</a></li><li class="dropdown-item"><!----> <a href="/pages/browser.html" class="nav-link">
+  浏览器
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Blog ✍🏻" class="dropdown-title"><span class="title">Blog ✍🏻</span> <span class="arrow down"></span></button> <button type="button" aria-label="Blog ✍🏻" class="mobile-dropdown-title"><span class="title">Blog ✍🏻</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/interview.html" class="nav-link">
+  面试 📖
+</a></li><li class="dropdown-item"><!----> <a href="/pages/blog.html" class="nav-link">
+  博客 ✍🏻
+</a></li></ul></div></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>node 全局变量 的运行过程</span> <!----></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h3 id="node-全局变量-的运行过程"><a href="#node-全局变量-的运行过程" class="header-anchor">#</a> node 全局变量 的运行过程</h3> <p>例如： OS 相关api:
+用户调用os.xxx ---&gt; node调用V8的对应方法 ---&gt; V8底层读取，又c++转化为js  ---&gt;return给node ---&gt; return给用户</p> <h3 id="commonjs-模块规范"><a href="#commonjs-模块规范" class="header-anchor">#</a> commonJS 模块规范</h3> <ol><li>webpack 用来讲js文件模块化，每个文件即一个函数，又独立的作用域</li> <li>export 默认以对象输出
+js内和外部是同一引用 ---&gt; 可在外部require 并附加属性上去
+module.exports = 指定方法或对象  可覆盖默认export对象</li></ol> <h3 id="事件循环"><a href="#事件循环" class="header-anchor">#</a> 事件循环</h3> <p>阻塞和非阻塞区别：系统在输入到输出期间能否接受其他输入。
+<img src="/assets/img/node-eventloop.24e43aa1.jpg" alt="eventloop" title="时间循环"></p> <h3 id="监听输入"><a href="#监听输入" class="header-anchor">#</a> 监听输入</h3> <h3 id="eventemitter-观察者模式-抛事件"><a href="#eventemitter-观察者模式-抛事件" class="header-anchor">#</a> EventEmitter 观察者模式，抛事件</h3> <p>有无订阅都能继续，不受被通知者影响。</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">NewEventListener</span> <span class="token keyword">extends</span> <span class="token class-name">EventEmitter</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">setInterval</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">emit</span><span class="token punctuation">(</span><span class="token string">'newSomething'</span><span class="token punctuation">,</span><span class="token punctuation">{</span>sth<span class="token operator">:</span><span class="token string">'some attribution'</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token number">3000</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">const</span> newListener <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">NewEventListener</span>
+
+newListener<span class="token punctuation">.</span><span class="token function">addListener</span><span class="token punctuation">(</span><span class="token string">'newSomething'</span><span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token parameter">res</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'yeah~'</span><span class="token punctuation">,</span>res<span class="token punctuation">)</span> <span class="token comment">// {sth:'some attribution'}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="回调-callback"><a href="#回调-callback" class="header-anchor">#</a> 回调 callback</h3> <p>node 中 try catch<br>
+每个事件循环都是新的调用栈</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">function</span> <span class="token function">interview</span><span class="token punctuation">(</span><span class="token parameter">callback</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">{</span>
+    <span class="token comment">// 新的调用栈</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&lt;</span><span class="token number">0.1</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token function">callback</span><span class="token punctuation">(</span><span class="token string">'success'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// throw new Error('fail');   // 所以原上层调用栈，catch不到</span>
+      <span class="token function">callback</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Error</span><span class="token punctuation">(</span><span class="token string">'fail'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">)</span><span class="token comment">// 所以需要callback 抛回去</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">500</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// try{</span>
+  <span class="token function">interview</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">err<span class="token punctuation">,</span>res</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token comment">// node 规范异步方法回调第一个参数为 Error</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">{</span>
+      console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'cry'</span><span class="token punctuation">,</span>e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'smile'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token comment">// } catch (e) {</span>
+<span class="token comment">//   console.log('cry',e);</span>
+<span class="token comment">// }</span>
+</code></pre></div><p>弊端：回调地狱，异步并发<br>
+异步并发解决：asyncjs,thunk</p> <h3 id="express"><a href="#express" class="header-anchor">#</a> express</h3> <ol><li>提供了路由、http重定向等功能
+app.get('路由',function(req,res,next){})</li> <li>同步中间件 符合洋葱模型，但是 next()是阻塞的，无context</li></ol> <h3 id="koa"><a href="#koa" class="header-anchor">#</a> koa</h3> <ol><li>中间件 异步，支持async await，提供context</li> <li>不提供路由，用户自定义路由中间件处理</li></ol> <h3 id="rpc调用"><a href="#rpc调用" class="header-anchor">#</a> RPC调用</h3> <p>服务器之间的通讯，和ajax区别：</p> <ol><li>不一定使用DNS进行寻址<br>
+ajax:使用DNS寻址<br>
+RPC：使用特有服务进行寻址</li> <li>应用层协议一般不使用http，使用二进制协议<br>
+二进制协议特点：[0110010101001010111110011]二进制流，不同位数代表不同字段</li></ol> <ul><li>数据包体积更小</li> <li>更快解码速率</li></ul> <ol start="3"><li>基于TCP或UDP协议<br>
+TCP通讯方式：单工通讯、半双工通讯（轮番单工）、全双工通讯</li></ol> <h4 id="buffer"><a href="#buffer" class="header-anchor">#</a> Buffer</h4> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> buf1 <span class="token operator">=</span> Buffer<span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token string">'sadf'</span> <span class="token operator">|</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//创建buffer </span>
+
+<span class="token keyword">const</span> buf2 <span class="token operator">=</span> Buffer<span class="token punctuation">.</span><span class="token function">alloc</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span>  <span class="token comment">//指定长度创建空buffer</span>
+
+buf2<span class="token punctuation">.</span><span class="token function">writeInt8</span><span class="token punctuation">(</span>数字<span class="token punctuation">,</span>偏移量<span class="token punctuation">)</span> <span class="token comment">//将数字以8位写入buffer中，用于编码一个二进制包 </span>
+
+<span class="token comment">// protocal-buffers 配置协议文件，将传入的JSON数据自动生成、解析二进制包</span>
+
+</code></pre></div><h4 id="net-搭建多路复用的rpc通道"><a href="#net-搭建多路复用的rpc通道" class="header-anchor">#</a> net 搭建多路复用的RPC通道</h4> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ==========================单工通信============================</span>
+<span class="token comment">// 单方写入</span>
+<span class="token comment">// ----------------server.js</span>
+<span class="token keyword">const</span> net <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'net'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> server <span class="token operator">=</span> net<span class="token punctuation">.</span><span class="token function">createServer</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">socket</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">{</span>
+  socket<span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">'data'</span><span class="token punctuation">,</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">buffer</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>buffer<span class="token punctuation">,</span>buffer<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+server<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">4000</span><span class="token punctuation">)</span>
+
+<span class="token comment">// ----------------client.js</span>
+<span class="token keyword">const</span> net <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'net'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> socket <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">net<span class="token punctuation">.</span>Socket</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+socket<span class="token punctuation">.</span><span class="token function">connect</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  host<span class="token operator">:</span><span class="token string">'127.0.0.1'</span><span class="token punctuation">;</span>
+  port<span class="token operator">:</span><span class="token string">'4000'</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+socket<span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token string">'hello'</span><span class="token punctuation">)</span>
+
+<span class="token comment">// ==========================半双工通信============================</span>
+<span class="token comment">// 来回通讯</span>
+<span class="token comment">// ----------------server.js</span>
+<span class="token keyword">const</span> net <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'net'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token number">111</span><span class="token operator">:</span><span class="token string">'01: 春天'</span><span class="token punctuation">,</span>
+  <span class="token number">222</span><span class="token operator">:</span><span class="token string">'02: 夏天'</span><span class="token punctuation">,</span>
+  <span class="token number">333</span><span class="token operator">:</span><span class="token string">'03: 秋天'</span><span class="token punctuation">,</span>
+  <span class="token number">444</span><span class="token operator">:</span><span class="token string">'04: 冬天'</span><span class="token punctuation">,</span>
+  <span class="token number">555</span><span class="token operator">:</span><span class="token string">'05: 春天'</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">const</span> server <span class="token operator">=</span> net<span class="token punctuation">.</span><span class="token function">createServer</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">socket</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">{</span>
+  socket<span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">'data'</span><span class="token punctuation">,</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">buffer</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">const</span> id <span class="token operator">=</span> buffer<span class="token punctuation">.</span><span class="token function">readInt16BE</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    buffer<span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span>buffer<span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span>data<span class="token punctuation">[</span>id<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment">//返回对应的值</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+server<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">4000</span><span class="token punctuation">)</span>
+
+<span class="token comment">// ----------------client.js</span>
+<span class="token keyword">const</span> net <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'net'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> socket <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">net<span class="token punctuation">.</span>Socket</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+socket<span class="token punctuation">.</span><span class="token function">connect</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  host<span class="token operator">:</span><span class="token string">'127.0.0.1'</span><span class="token punctuation">;</span>
+  port<span class="token operator">:</span><span class="token string">'4000'</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+socket<span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token number">111</span><span class="token punctuation">)</span>
+
+<span class="token comment">// ==========================全双工通信============================</span>
+<span class="token comment">/*
+可能存在的问题
+1. 请求响应不对应  
+需要手动拼接一个字段标记包号
+2. 同时发送很多包 TCP会将数据合并发送(优化机制)，造成粘包  
+需要手动分割，标记包长
+3. 网络错误处理
+*/</span> 
+
+
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">1/31/2023, 10:43:18 AM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.6a1e7b57.js" defer></script><script src="/assets/js/2.f7f94fda.js" defer></script><script src="/assets/js/10.94991a2c.js" defer></script>
+  </body>
+</html>

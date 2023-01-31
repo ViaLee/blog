@@ -54,6 +54,10 @@ module.exports = {
         ],
       },
       {
+        text: "Node",
+        link: "/pages/node",
+      },
+      {
         text: "Blog ✍🏻",
         items: [
           { text: "面试 📖", link: "/pages/interview" },

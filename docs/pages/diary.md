@@ -141,6 +141,13 @@ pwa，serviceworker；
 打包相关，umd rollup require.js; node 获取当前版本选择更新版本；
 lerna 多包管理；
 骇客大赛小程序开发；
+本地httpserver 转https  local-ssl-proxy;
+iframe，嵌套限制，frame-ancestors
+```js
+Content-Security-Policy: frame-ancestors <source>;
+X-Frame-Options: DENY  // 该页面不允许在 frame 中展示
+X-Frame-Options: SAMEORIGIN  //可以在相同域名页面的 frame 中展示
+```
 chrome插件,发版优化。
 
 果然小公司可以了解完整的项目从0到1；

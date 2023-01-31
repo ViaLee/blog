@@ -297,3 +297,9 @@ function unique(arr) {
 let amap = new Map();
 data = data.filter((a) => !amap.has(a.value) && amap.set(a.value, 1));
 ```
+
+
+## 应用场景
+### postMessage
+1. chrome插件，通讯
+2. 同一域名页面之间通讯

@@ -54,7 +54,7 @@ module.exports = {
         ],
       },
       {
-        text: "Node",
+        text: "Node ☁️",
         link: "/pages/node",
       },
       {

@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>node 全局变量 的运行过程 | 💫Viaのblog</title>
+    <title>Node开发实践 | 💫Viaのblog</title>
     <meta name="generator" content="VuePress 1.8.2">
     <link rel="icon" href="/babe.png">
     <meta name="description" content="">
     
-    <link rel="preload" href="/assets/css/0.styles.a509abab.css" as="style"><link rel="preload" href="/assets/js/app.7280b95d.js" as="script"><link rel="preload" href="/assets/js/2.f7f94fda.js" as="script"><link rel="preload" href="/assets/js/10.3ed26b34.js" as="script"><link rel="prefetch" href="/assets/js/11.dc2a681f.js"><link rel="prefetch" href="/assets/js/12.8ba7a12f.js"><link rel="prefetch" href="/assets/js/13.1f8c0ad5.js"><link rel="prefetch" href="/assets/js/14.280d7002.js"><link rel="prefetch" href="/assets/js/15.db1fa7f7.js"><link rel="prefetch" href="/assets/js/16.9be4c566.js"><link rel="prefetch" href="/assets/js/17.13f58848.js"><link rel="prefetch" href="/assets/js/18.0124a768.js"><link rel="prefetch" href="/assets/js/19.fe79c284.js"><link rel="prefetch" href="/assets/js/20.7a513143.js"><link rel="prefetch" href="/assets/js/21.6e853277.js"><link rel="prefetch" href="/assets/js/22.fbce710a.js"><link rel="prefetch" href="/assets/js/23.0e11ca0d.js"><link rel="prefetch" href="/assets/js/3.c24edd89.js"><link rel="prefetch" href="/assets/js/4.dbbfc7ac.js"><link rel="prefetch" href="/assets/js/5.1efdb115.js"><link rel="prefetch" href="/assets/js/6.6feef2bf.js"><link rel="prefetch" href="/assets/js/7.5a49da22.js"><link rel="prefetch" href="/assets/js/8.80531751.js"><link rel="prefetch" href="/assets/js/9.c7dd7c49.js">
+    <link rel="preload" href="/assets/css/0.styles.a509abab.css" as="style"><link rel="preload" href="/assets/js/app.9142bda9.js" as="script"><link rel="preload" href="/assets/js/2.f7f94fda.js" as="script"><link rel="preload" href="/assets/js/10.99832e47.js" as="script"><link rel="prefetch" href="/assets/js/11.dc2a681f.js"><link rel="prefetch" href="/assets/js/12.8ba7a12f.js"><link rel="prefetch" href="/assets/js/13.515533ed.js"><link rel="prefetch" href="/assets/js/14.02df2b29.js"><link rel="prefetch" href="/assets/js/15.4a4d1632.js"><link rel="prefetch" href="/assets/js/16.01649045.js"><link rel="prefetch" href="/assets/js/17.49ac8e1a.js"><link rel="prefetch" href="/assets/js/18.0124a768.js"><link rel="prefetch" href="/assets/js/19.9112247b.js"><link rel="prefetch" href="/assets/js/20.7a513143.js"><link rel="prefetch" href="/assets/js/21.be3d7880.js"><link rel="prefetch" href="/assets/js/22.fbce710a.js"><link rel="prefetch" href="/assets/js/23.c07e1051.js"><link rel="prefetch" href="/assets/js/3.e2e912fd.js"><link rel="prefetch" href="/assets/js/4.dbbfc7ac.js"><link rel="prefetch" href="/assets/js/5.1efdb115.js"><link rel="prefetch" href="/assets/js/6.6feef2bf.js"><link rel="prefetch" href="/assets/js/7.4b590157.js"><link rel="prefetch" href="/assets/js/8.49311ff6.js"><link rel="prefetch" href="/assets/js/9.623af976.js">
     <link rel="stylesheet" href="/assets/css/0.styles.a509abab.css">
   </head>
   <body>
@@ -52,7 +52,7 @@
   面试 📖
 </a></li><li class="dropdown-item"><!----> <a href="/pages/blog.html" class="nav-link">
   博客 ✍🏻
-</a></li></ul></div></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>node 全局变量 的运行过程</span> <!----></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h3 id="node-全局变量-的运行过程"><a href="#node-全局变量-的运行过程" class="header-anchor">#</a> node 全局变量 的运行过程</h3> <p>例如： OS 相关api:
+</a></li></ul></div></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Node开发实践</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/node.html#node开发实践" class="sidebar-link">Node开发实践</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/pages/node.html#node-全局变量-的运行过程" class="sidebar-link">node 全局变量 的运行过程</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#commonjs-模块规范" class="sidebar-link">commonJS 模块规范</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#事件循环" class="sidebar-link">事件循环</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#监听输入" class="sidebar-link">监听输入</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#eventemitter-观察者模式-抛事件" class="sidebar-link">EventEmitter 观察者模式，抛事件</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#回调-callback" class="sidebar-link">回调 callback</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#express" class="sidebar-link">express</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#koa" class="sidebar-link">koa</a></li><li class="sidebar-sub-header"><a href="/pages/node.html#rpc调用" class="sidebar-link">RPC调用</a></li></ul></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h2 id="node开发实践"><a href="#node开发实践" class="header-anchor">#</a> Node开发实践</h2> <h3 id="node-全局变量-的运行过程"><a href="#node-全局变量-的运行过程" class="header-anchor">#</a> node 全局变量 的运行过程</h3> <p>例如： OS 相关api:
 用户调用os.xxx ---&gt; node调用V8的对应方法 ---&gt; V8底层读取，又c++转化为js  ---&gt;return给node ---&gt; return给用户</p> <h3 id="commonjs-模块规范"><a href="#commonjs-模块规范" class="header-anchor">#</a> commonJS 模块规范</h3> <ol><li>webpack 用来讲js文件模块化，每个文件即一个函数，又独立的作用域</li> <li>export 默认以对象输出
 js内和外部是同一引用 ---&gt; 可在外部require 并附加属性上去
 module.exports = 指定方法或对象  可覆盖默认export对象</li></ol> <h3 id="事件循环"><a href="#事件循环" class="header-anchor">#</a> 事件循环</h3> <p>阻塞和非阻塞区别：系统在输入到输出期间能否接受其他输入。
@@ -170,7 +170,7 @@ socket<span class="token punctuation">.</span><span class="token function">write
 */</span> 
 
 
-</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">1/31/2023, 10:43:18 AM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
-    <script src="/assets/js/app.7280b95d.js" defer></script><script src="/assets/js/2.f7f94fda.js" defer></script><script src="/assets/js/10.3ed26b34.js" defer></script>
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">1/31/2023, 10:48:34 AM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.9142bda9.js" defer></script><script src="/assets/js/2.f7f94fda.js" defer></script><script src="/assets/js/10.99832e47.js" defer></script>
   </body>
 </html>

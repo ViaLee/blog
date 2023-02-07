@@ -55,3 +55,23 @@ chrome 的 back/forward cache
 ### umi request 做了哪些处理
 
 ### 微前端 通讯
+
+
+
+## 2023
+### taro项目编译h5白屏
+bug：
+1. 部分安卓手机UC浏览器、苹果safri浏览器页面白屏；
+   本地启动真机访问无异常    
+   本地编译h5后使用真机访问白屏
+解决过程：
+使用vconsole，CDN方式引入，看到白屏页面报错：  
+'Uncaught SyntaxError:'super' keyword unexpected here'  
+是项目中使用的Recoil兼容性问题，查看官网发现不支持ES5，得另外使用babel编译。  
+将Recoil以CDN方式引入得以解决。
+![Recoil](./recoil.jpg )
+
+2. 使用Taro.redirectTo,reLaunch 跳转，路由变化但页面白屏
+版本升级
+
+3. 编译

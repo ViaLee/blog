@@ -170,3 +170,9 @@ socket.write(111)
 
 
 ```
+
+
+### api
+**path**  
+path.resolve() 从根目录拼接（绝对路径）
+path.join() 单纯拼接

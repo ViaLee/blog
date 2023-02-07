@@ -94,8 +94,17 @@ git rebase commit_id  #会将HEAD指向指定的这次commit，此时HEAD处于�
 ![Rebase](./rebase.gif "rebase")
 
 ### revert 和 reset
-
-### stash
+#### revert 
+回退中间某个版本，会生成新的commit记录
+```
+git revert -n commitID
+```
+#### reset
+将HEAD回指到指定的commitID版本
+```
+git reset --hard commitID
+<!-- HEAD is now at 8de96b5  -->
+```
 
 ## 正则
 

@@ -43,10 +43,10 @@ module.exports = {
             text: "HTTP",
             link: "/pages/http",
           },
-          {
-            text: "安全",
-            link: "/pages/security",
-          },
+          // {
+          //   text: "安全",
+          //   link: "/pages/security",
+          // },
           {
             text: "浏览器",
             link: "/pages/browser",
@@ -62,6 +62,7 @@ module.exports = {
         items: [
           { text: "面试 📖", link: "/pages/interview" },
           { text: "博客 ✍🏻", link: "/pages/blog" },
+          { text: "ERROR ❌", link: "/pages/log" },
         ],
       },
       // { text: "杂记 🍀", link: "/pages/diary" },

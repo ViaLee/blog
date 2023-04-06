@@ -30,12 +30,16 @@ exports.num = num; //exports即 module.exports;
 module.exports.add = add;
 ```
 
-3. 加载某一个模块，就是加载这个模块的 module.exports 属性 ,require 的基本功能是读取并执行 JS 文件，如果模块导出的是一个函数，就不能定义在 exports 对象上。require加载时，会执行模块中的代码，然后将模块的module.exports属性作为返回值进行返回。require属性：  
+3. 加载某一个模块，就是加载这个模块的 module.exports 属性 ,require 的基本功能是读取并执行 JS 文件，如果模块导出的是一个函数，就不能定义在 exports 对象上。  
+require加载时，会执行模块中的代码，然后将模块的module.exports属性作为返回值进行返回。  
+require属性：  
 - resolve：需要解析的模块路径。
 - main：Module 对象，表示当进程启动时加载的入口脚本。
 - extensions：如何处理文件扩展名。
 - cache：被引入的模块将被缓存在这个对象中。  
-当我们在一个项目中多次require同一个模块时，CommonJS并不会多次执行该模块文件；而是在第一次加载时，将模块缓存；以后再加载该模块时，就直接从缓存中读取该模块.可以通过``delete require.cache[modulePath]``将缓存的模块删除。
+当我们在一个项目中多次require同一个模块时，CommonJS并不会多次执行该模块文件；  
+而是在第一次加载时，将模块缓存；  
+以后再加载该模块时，就直接从缓存中读取该模块.可以通过``delete require.cache[modulePath]``将缓存的模块删除。
 ```js
 require ={
   ...,
@@ -58,7 +62,7 @@ import 编译时加载，会优先执行（变量提升），是引用，是只�
 - CommonJS默认非严格模式，ES6的模块自动采用严格模式
 
 #### **UMD**
-做了兼容CJS和EJS的处理，判断。
+兼容CJS和EJS的处理，判断支持哪种类型直接应用。
 
 ### 错误类型
 
@@ -135,10 +139,10 @@ valueOf 和 toString 返回值的区别：
 valueOf 按值的类型返回值；
 toString 按 string 类型返回值。
 
-### 闭包
+<!-- ### 闭包
 
 闭包的应用场景？  
-curry 函数，防抖节流，compose 函数
+curry 函数，防抖节流，compose 函数 -->
 
 ## ES6+
 

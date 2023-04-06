@@ -2,13 +2,13 @@
 
 ## Jsx
 
-react 中，经过 babel 编译-->React.createElement(react 17 不需要显式导入 react)  
+经过 babel 编译-->React.createElement(react 17 不需要显式导入 react)交由React处理、渲染。  
 React DOM 在渲染所有输入内容之前，默认会进行转义，这样可以有效地防止 XSS（cross-site-scripting, 跨站脚本）攻击。  
-可通过@babel/plugin-transform-react-jsx (opens new window)插件显式告诉 Babel 编译时需要将 JSX 编译为什么函数的调用（默认为 React.createElement）。
+可通过@babel/plugin-transform-react-jsx (opens new window)插件显式告诉 Babel 编译时需要将 JSX 编译为什么函数的调用（默认为 React.createElement）。  
 
 ### React.createElement
 
-createElement 方法会创建并返回一个对象，存放组件的信息，其$$typeof 为'REACT_ELEMENT_TYPE'  
+createElement 方法会创建并返回一个对象，存放组件的信息，其$$typeof 为'REACT_ELEMENT_TYPE'，react.element类型  
 React.isValidElement()检测是否为合法组件
 
 ```js
@@ -20,7 +20,7 @@ export function isValidElement(object) {
   );
 }
 ```
-
+<!-- 
 ### React Component
 
 区分函数组件和类组件：
@@ -40,7 +40,7 @@ console.log(`ClassComponent is Class  ${clas instanceof React.Component}`); //tr
 
 const func = new FunctionComponent();
 console.log(`FunctionComponent is Class  ${func instanceof React.Component}`); //false
-```
+``` -->
 
 ## Children 相关 API
 
@@ -51,10 +51,10 @@ React.Children.forEach = React.Children.toArray + Array.prototype.forEach
 
 > 通常与 React.cloneElement()一起使用操作 children,注入新的属性
 
-## 单项数据流
+<!-- ## 单项数据流
 
 1. 组件间 props 是只读的，自顶向下，流向单一。
-2. 数据改变驱动视图改变，而视图变化需要手动更新状态
+2. 数据改变驱动视图改变，而视图变化需要手动更新状态 -->
 
 ## 生命周期
 
@@ -64,10 +64,10 @@ static getDerivedStateFromError(error) render 阶段，不可有副作用
 componentDidCatch() commit 阶段，可有副作用  
 componentDidUpdate 与 useEffect 无依赖类似，每一次执行函数组件都会执行
 
-### getSnapshotBeforeUpdate
+<!-- ### getSnapshotBeforeUpdate
 
 获取更新前 DOM 信息的最佳时期，可进行和 dom 相关的计算
-return 一个快照作为 componentDidUpdate 的第三个参数
+return 一个快照作为 componentDidUpdate 的第三个参数 -->
 
 ### useEffect 和 useLayoutEffect 和 componentDidMount
 
@@ -81,15 +81,16 @@ componentDidMount 和 useLayoutEffect：commit 的 layout 阶段同步调用（�
 15：同步不可中断
 
 - Reconciler（协调器）—— 负责找出变化的组件
-- Renderer（渲染器）—— 负责将变化的组件渲染到页面上。递归处理虚拟 DOM。
+- Renderer（渲染器）—— 渲染更新。递归处理虚拟 DOM。
 
-16：异步可中断
+16：异步可中断，优先级调度
 
 - Scheduler（调度器）—— 调度任务的优先级，高优任务优先进入 Reconciler  
-  模拟 requestIdleCallback。不直接使用的原因：浏览器兼容性；触发频率不稳定（切换 tab）。
+  模拟 requestIdleCallback。  
+  不直接使用的原因：浏览器兼容性；触发频率不稳定（切换 tab）。
 - Reconciler（协调器）—— 负责找出变化的组件  
-  调用 shouldYield，判断是否有剩余时间，标记有改变的虚拟 dom
-- Renderer（渲染器）—— 负责将变化的组件渲染到页面上
+  调用 shouldYield，判断是否有剩余时间，用EffectTag标记有改变的节点
+- Renderer（渲染器）—— 渲染更新
 
 ## Fiber
 
@@ -117,14 +118,14 @@ export const MemoComponent = 14; // 对应 React.memo 返回的组件
 ```
 
 ### fiber 架构
-
-双缓存：在内存中构建，直接替换  
-特点：更新可中断可继续，可设置优先级  
+  
 fiber——纤程，理解为协程的一种实现，js 中协程的实现：generator  
 不使用 generator 的原因：
 
 - 有传染性，当某个函数变为 generator 后，该函数调用链上的其他函数会有影响
 - 无法实现优先级。Generator 执行的中间状态是上下文关联的。
+ 
+特点：更新可中断再继续，优先级调度
 
 首次调用 ReactDOM.render——创建 FiberRootNode(整个应用的根节点)  
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ↓ current Fiber 树(当前页面内容)  
@@ -132,13 +133,15 @@ fiber——纤程，理解为协程的一种实现，js 中协程的实现：gen
 
 ### 首屏渲染、更新区别
 
+``双缓存``：在内存中构建fiber节点树current fiber树和workinprogress fiber树，替换 
+
 首屏渲染与更新的区别，首屏渲染创建 fiber 树的过程没有 diff 算法  
 对于两棵树都存在的 fiber 节点用 alternate 属性连接  
 若 rootFiber 有 alternate 指向，则会基于该指向树创建 workInProgress Fiber 树。  
 将 alternate 指向的 current fiber 和当前返回的 jsx 结构做对比，生成 workInProgress Fiber 树的过程就是进行`diff算法`。  
 workInProgress Fiber 树 commit 后成为 FiberRootNode 的 current 指向，即变成 current 树。
 
-### Context
+<!-- ### Context
 
 #### createContext
 
@@ -157,7 +160,7 @@ context.Consumer = {
   $$typeof: REACT_CONTEXT_TYPE,
   _context: context,
 };
-```
+``` -->
 ### 强制重新渲染
 
 1. forceUpdate：  
@@ -181,15 +184,23 @@ dangerouslySetInnerHTML 是 React 为浏览器 DOM 提供 innerHTML 的替换方
 内容不能包含 react 组件，如果包含，需要用 ReactDom.render 包裹渲染
 
 ### diff 算法
+限制：
+1. 同级
+2. 同种元素
+3. 可通过设置key打破限制2 
 
-对比更新前后的 nodeList,为 node 标记 flag,需要考虑是以下三种情况的哪种情况：
+diff分两种情况：
+1. 单一节点  判断key是否一致、判断是否为同种元素 &emsp;--是--> 根据currentfiber clone createFiber
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ↓ 否  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 标记删除dom,创建newfiber
+2. 多节点
+需要考虑是以下三种情况的哪种情况：
+- 节点属性变化
+- 节点增删
+- 节点位置移动  
+三种情况的处理逻辑不同，1情况更常见。  
+经历两轮遍历，首轮优先处理常见情况1，第二轮后其他情况。  
 
-1. 节点增删
-2. 节点属性变化
-3. 节点位置移动
-
-三种情况的处理逻辑不同，情况 1&2 属于常见情况，3 不常见。  
-经历多轮遍历，优先处理常见情况，后处理不常见情况。
 
 ```js
 // 虚拟dom节点数据结构

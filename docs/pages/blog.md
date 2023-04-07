@@ -94,15 +94,25 @@ git rebase commit_id  #会将HEAD指向指定的这次commit，此时HEAD处于�
 ![Rebase](./rebase.gif "rebase")
 
 ### revert 和 reset
-#### revert 
-回退中间某个版本，会生成新的commit记录
+
+#### revert
+
+回退中间某个版本，会生成新的 commit 记录
+
 ```
 git revert -n commitID
 ```
+
 #### reset
-将HEAD回指到指定的commitID版本
-```
+
+将 HEAD 回指到指定的 commitID 版本
+
+```bash
 git reset --hard commitID
+
+git reset --soft HEAD~1  # 不删除工作空间改动代码，撤销 commit，不撤销 git add .
+git reset --hard HEAD~1  # 删除工作空间改动代码，撤销 commit，撤销 git add .
+git reset --mixed HEAD~1 #默认 --mixed 不删除工作空间改动代码，撤销commit，并且撤销git add .
 <!-- HEAD is now at 8de96b5  -->
 ```
 
@@ -207,11 +217,12 @@ self.addEventListener("install", function (event) {
 ```
 
 ### 缓存 cache
+
 ![Cache](./http-cache.jpg "cache")
 [浏览器缓存](https://juejin.cn/post/6844903799195172877)  
 CacheStorage 本质是 ServiceWorkerCacheStorage 对象 ，同一域名只会有一个 ServiceWorkerCacheStorage  
 Cache 的资源是无法跨域共享的。  
-由于 Service Worker 相关缓存的底层存储都使用了系统的文件系统（File System），而文件系统一般是不支持多进程访问的，当统一域名下有两个不同的 Service Worker 是无法同时对同一资源进行操作的。    
+由于 Service Worker 相关缓存的底层存储都使用了系统的文件系统（File System），而文件系统一般是不支持多进程访问的，当统一域名下有两个不同的 Service Worker 是无法同时对同一资源进行操作的。  
 Cache 本质是 ServiceWorkerCache，当 Service Worker 从 Cache 拿不到资源时，就会去 http cache 查找，找不到才去请求网络。  
 用于存储 response、request 对象  
 除非手动清除、永久有效  

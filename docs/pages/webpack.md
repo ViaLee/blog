@@ -46,19 +46,23 @@ module.exports = {
   devtool: "source-map", // 输出源代码
 };
 ```
+
 ## 配置
-### path和publicPath
+
+### path 和 publicPath
+
 区别：  
 path: 输出文件存放目录，必须是绝对路径（使用 Node.js 的 path 模块）  
 publicPath: 读取文件目录，url 相对于 HTML 页面。常用来设置资源请求前缀。
+
 ```js
 module.exports = {
   output: {
-      path:'',
-      filename: '[name].bundle.js',
-      publicPath: 'dist/'
-    }
-  }
+    path: "",
+    filename: "[name].bundle.js",
+    publicPath: "dist/",
+  },
+};
 ```
 
 ## plugin 和 loader
@@ -202,3 +206,9 @@ const config = {
 > 参考：  
 > [Webpack 4 Tree Shaking 终极优化指南](https://juejin.cn/post/6844903998634328072)  
 > [Tree Shaking](https://webpack.docschina.org/guides/tree-shaking/)
+
+# bundleless
+
+1.拆分 bundle, 可利于 http2 多路复用以及更利于缓存  
+2.源代码 no bundle  
+3.预打包依赖产物 esbuild、cdn

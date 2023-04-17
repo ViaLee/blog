@@ -2,7 +2,7 @@
 
 ## 完整流程
 
-触发更新（ReactDom.render,classcomponent,fncomponent）
+触发更新（ReactDom.render,classcomponent,fncomponent）  
 &emsp;&emsp;|  
 &emsp;&emsp;|  
 &emsp;&emsp;↓  
@@ -61,9 +61,9 @@ Window.cancelIdleCallback(handle)  //取消
 
 ### web 通信
 
-宏任务
+都属于宏任务
 
-1. 跨文档通信 PostMessage
+1. 跨文档通信 PostMessage，方法可以安全地实现跨源通信。
 2. 通道通信 MessageChannel
 
 ```js
@@ -76,14 +76,13 @@ channel.port2.postMessage("Hello World");
 
 ### react v16.0.0 rAF + postMessage
 
-<!-- > window.postMessage() 方法可以安全地实现跨源通信。 -->
-
 1. 获取当前帧最晚结束时间（当前执行时间 + 33ms）
-2. postmessage 推入一个任务
+2. postmessage 推入一个任务（完成其他任务之后）  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;↓ 
 3. 执行 messageListenr 回调, 获取当前帧剩余时间
 4. 将剩余时间传入到 rAF 的 callback 函数中
 
-> requestAnimationFrame() 会被暂停调用以提升性能和电池寿命，会影响 react。
+> requestAnimationFrame() 会被暂停调用以提升性能和电池寿命，会影响 react执行。
 
 ### react v16.2.0+ MessageChannel
 flushWork返回是否还有未完成的任务，如果有则会进行下一次PostMessage，告诉浏览器执行完高优任务剩余时间继续执行，进入下一个切片
@@ -139,17 +138,23 @@ function shouldYieldToHost() {
 
 ### diff
 
-- 单一节点 diff
-- 多节点 diff
+限制：
+1. 同级
+2. 同种元素
+3. 可通过设置key打破限制2 
 
+diff分两种情况：
+1. 单一节点  判断key是否一致、判断是否为同种元素 &emsp;--是--> 根据currentfiber clone createFiber
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ↓ 否  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 标记删除dom,创建newfiber
+2. 多节点
 对比更新前后的 nodeList,为 node 标记 flag,需要考虑是以下三种情况的哪种情况：
+- 节点属性变化
+- 节点增删
+- 节点位置移动  
+三种情况的处理逻辑不同，1情况更常见。  
+经历两轮遍历，首轮优先处理常见情况1，第二轮后其他情况。  
 
-1. 节点增删
-2. 节点属性变化
-3. 节点位置移动
-
-三种情况的处理逻辑不同，情况 1&2 属于常见情况，3 不常见。  
-经历多轮遍历，优先处理常见情况，后处理不常见情况。
 
 ```js
 // 虚拟dom节点数据结构

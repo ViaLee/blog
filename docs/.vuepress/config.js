@@ -23,16 +23,16 @@ module.exports = {
             link: "/pages/javascript",
           },
           {
-            text: "React",
-            link: "/pages/react",
-          },
-          {
             text: "CSS",
             link: "/pages/css",
           },
           {
             text: "Webpack",
             link: "/pages/webpack",
+          },
+          {
+            text: "Flutter",
+            link: "/pages/flutter",
           },
         ],
       },
@@ -51,6 +51,19 @@ module.exports = {
             text: "浏览器",
             link: "/pages/browser",
           },
+        ],
+      },
+      {
+        text:'React',
+        items: [
+          {
+            text: "底层",
+            link: "/pages/reactCode",
+          },
+          {
+            text: "其他",
+            link: "/pages/react",
+          }
         ],
       },
       {

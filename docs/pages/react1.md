@@ -18,6 +18,34 @@ commit 阶段
 
 ## 时间切片
 
+FPS(frame per second) 每秒显示帧数  
+浏览器一帧干了些啥  
+![fps](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13528958b6804c16a1dafb613d24b8a9~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+### requestFrameAnimation
+
+#### 基本用法
+
+每一帧只会调用一次 rAF。
+
+```js
+let fn = () => {};
+let count = 0;
+function animation() {
+  if (count > 200) return;
+
+  dom.style.marginLeft = `${count}px`;
+  count++;
+}
+Window.requestAnimationFrame(fn);
+Window.cancelAnimationFrame(fn);
+```
+
+#### 兼容性
+
+理论上不能使用 setTimeout 兜底：  
+当执行完 setTimeout 回调后，浏览器发现还有时间，于是又执行了几次 setTimeout 回调，最后再一起渲染，所以在原本一帧的时间内执行了多次 setTimeout 回调，动画自然就会快很多。且 setTimeout 有最低 4ms 延时。
+
 ### requestIdleCallback
 
 ```js
@@ -26,23 +54,83 @@ const callback=(deadline)=>{
   console.log(deadline.timeRemaining()) //本次空闲周期内剩余时间
 }
 var handle = window.requestIdleCallback(callback[, options])
-// Window.cancelIdleCallback(handle) 取消
+Window.cancelIdleCallback(handle)  //取消
 ```
 
 - requestIdleCallback 每秒只会被执行 20 次，一个空闲周期最长 50ms
 - 低优先级的任务适用
 
-### requestFrameAnimation
+### web 通信
+
+宏任务
+
+1. 跨文档通信 PostMessage
+2. 通道通信 MessageChannel
 
 ```js
-Window.requestAnimationFrame(() => {
-  // dom操作
-});
+var channel = new MessageChannel();
+channel.port1.onmessage = (e) => {
+  console.log(e.data);
+};
+channel.port2.postMessage("Hello World");
 ```
 
-### react v16 rAF + postMessage
+### react v16.0.0 rAF + postMessage
 
-> window.postMessage() 方法可以安全地实现跨源通信。
+<!-- > window.postMessage() 方法可以安全地实现跨源通信。 -->
+
+1. 获取当前帧最晚结束时间（当前执行时间 + 33ms）
+2. postmessage 推入一个任务
+3. 执行 messageListenr 回调, 获取当前帧剩余时间
+4. 将剩余时间传入到 rAF 的 callback 函数中
+
+> requestAnimationFrame() 会被暂停调用以提升性能和电池寿命，会影响 react。
+
+### react v16.2.0+ MessageChannel
+
+```js
+function flushWork(hasTimeRemaining, initialTime) {
+  return workLoop(hasTimeRemaining, initialTime);
+}
+
+var currentTask;
+
+function workLoop(hasTimeRemaining, initialTime) {
+  currentTask = taskQueue[0];
+  while (currentTask != null) {
+    if (
+      currentTask.expirationTime > initialTime &&
+      (!hasTimeRemaining || shouldYieldToHost())
+    ) {
+      break;
+    }
+
+    const callback = currentTask.callback;
+    callback();
+
+    taskQueue.shift();
+
+    currentTask = taskQueue[0];
+  }
+  if (currentTask !== null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// 默认的时间切片
+const frameInterval = 5;
+
+function shouldYieldToHost() {
+  const timeElapsed = getCurrentTime() - startTime;
+  if (timeElapsed < frameInterval) {
+    return false;
+  }
+
+  return true;
+}
+```
 
 ## render 阶段
 

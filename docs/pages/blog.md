@@ -359,3 +359,55 @@ editorRef.current?.focus();
 ```js
 console.log(Math.abs(0.1 + 0.2 - 0.3) <= Number.EPSILON);
 ```
+
+## Docker
+
+创建 image 文件
+
+```shell
+docker image build -t gemstone:1.3.0 .
+```
+
+拉取 image
+
+```shell
+docker  image pull  library/hello-world
+```
+
+查看文件
+
+```shell
+docker image ls
+```
+
+运行 image
+
+```shell
+docker container run hello-world
+```
+
+> container run 会自动拉取
+
+终止容器
+
+```shell
+docker container kill [containID]
+```
+
+列出本机正在运行的容器
+
+```shell
+$ docker container ls
+```
+
+列出本机所有容器，包括终止运行的容器
+
+```shell
+$ docker container ls --all
+```
+
+删除容器
+
+```shell
+docker container rm ID
+```

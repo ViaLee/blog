@@ -13,7 +13,7 @@ module.exports = {
   head: [["link", { rel: "icon", href: "/babe.png" }]],
   themeConfig: {
     logo: "/babe.png",
-    lastUpdated: '上次更新',
+    lastUpdated: "上次更新",
     nav: [
       {
         text: "Basic 🐳",
@@ -60,7 +60,7 @@ module.exports = {
       {
         text: "Blog ✍🏻",
         items: [
-          { text: "面试 📖", link: "/pages/interview" },
+          // { text: "面试 📖", link: "/pages/interview" },
           { text: "博客 ✍🏻", link: "/pages/blog" },
           { text: "ERROR ❌", link: "/pages/log" },
         ],
@@ -73,16 +73,16 @@ module.exports = {
   },
   theme: "@vuepress/default",
   plugins: {
-    '@vssue/vuepress-plugin-vssue': {
+    "@vssue/vuepress-plugin-vssue": {
       // 设置 `platform` 而不是 `api`
-      platform: 'github',
+      platform: "github",
 
       // 其他的 Vssue 配置
-      owner: 'ViaLee',
-      repo: 'https://github.com/ViaLee/blog-comment.git',
-      clientId: 'b5b0c669155ba6dcdf72',
-      clientSecret: 'afc6433e13d1345c5276d430289976a805c19649',
-      locale:'zh-CN',
+      owner: "ViaLee",
+      repo: "https://github.com/ViaLee/blog-comment.git",
+      clientId: "b5b0c669155ba6dcdf72",
+      clientSecret: "afc6433e13d1345c5276d430289976a805c19649",
+      locale: "zh-CN",
     },
     // plugins: ['@vuepress/last-updated',
     // {

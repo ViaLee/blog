@@ -26,7 +26,6 @@ FPS(frame per second) 每秒显示帧数
 
 #### 基本用法
 
-
 ```js
 let fn = () => {};
 let count = 0;
@@ -39,7 +38,9 @@ function animation() {
 Window.requestAnimationFrame(fn);
 Window.cancelAnimationFrame(fn);
 ```
->每一帧只会调用一次 rAF
+
+> 每一帧只会调用一次 rAF
+
 #### 兼容性
 
 理论上不能使用 setTimeout 兜底：  
@@ -78,14 +79,15 @@ channel.port2.postMessage("Hello World");
 
 1. 获取当前帧最晚结束时间（当前执行时间 + 33ms）
 2. postmessage 推入一个任务（完成其他任务之后）  
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;↓ 
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;↓
 3. 执行 messageListenr 回调, 获取当前帧剩余时间
 4. 将剩余时间传入到 rAF 的 callback 函数中
 
-> requestAnimationFrame() 会被暂停调用以提升性能和电池寿命，会影响 react执行。
+> requestAnimationFrame() 会被暂停调用以提升性能和电池寿命，会影响 react 执行。
 
 ### react v16.2.0+ MessageChannel
-flushWork返回是否还有未完成的任务，如果有则会进行下一次PostMessage，告诉浏览器执行完高优任务剩余时间继续执行，进入下一个切片
+
+flushWork 返回是否还有未完成的任务，如果有则会进行下一次 PostMessage，让出线程，告诉浏览器执行完高优任务后继续执行，进入下一个切片
 
 ```js
 function flushWork(hasTimeRemaining, initialTime) {
@@ -96,7 +98,7 @@ var currentTask;
 
 function workLoop(hasTimeRemaining, initialTime) {
   currentTask = taskQueue[0];
-    // 1.从任务队列第一个开始遍历执行
+  // 1.从任务队列第一个开始遍历执行
   while (currentTask != null) {
     // 2.已无剩余时间或主动交还执行权则跳出遍历
     if (
@@ -113,7 +115,7 @@ function workLoop(hasTimeRemaining, initialTime) {
 
     currentTask = taskQueue[0];
   }
-    // 4. 返回是否还有未完成的任务
+  // 4. 返回是否还有未完成的任务
   if (currentTask !== null) {
     return true;
   } else {
@@ -139,22 +141,24 @@ function shouldYieldToHost() {
 ### diff
 
 限制：
+
 1. 同级
 2. 同种元素
-3. 可通过设置key打破限制2 
+3. 可通过设置 key 打破限制 2
 
-diff分两种情况：
-1. 单一节点  判断key是否一致、判断是否为同种元素 &emsp;--是--> 根据currentfiber clone createFiber
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ↓ 否  
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 标记删除dom,创建newfiber
+diff 分两种情况：
+
+1. 单一节点 判断 key 是否一致、判断是否为同种元素 &emsp;--是--> 根据 currentfiber clone createFiber
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ↓ 否  
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 标记删除 dom,创建 newfiber
 2. 多节点
-对比更新前后的 nodeList,为 node 标记 flag,需要考虑是以下三种情况的哪种情况：
+   对比更新前后的 nodeList,为 node 标记 flag,需要考虑是以下三种情况的哪种情况：
+
 - 节点属性变化
 - 节点增删
 - 节点位置移动  
-三种情况的处理逻辑不同，1情况更常见。  
-经历两轮遍历，首轮优先处理常见情况1，第二轮后其他情况。  
-
+  三种情况的处理逻辑不同，1 情况更常见。  
+  经历两轮遍历，首轮优先处理常见情况 1，第二轮后其他情况。
 
 ```js
 // 虚拟dom节点数据结构

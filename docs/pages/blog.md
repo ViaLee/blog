@@ -349,16 +349,16 @@ editorRef.current?.focus();
 [JS 手写题](https://juejin.cn/post/6946022649768181774)
 [八股文](https://juejin.cn/post/7016593221815910408)
 
-## 重学前端
+<!-- ## 重学前端
 
 ### JS
 
-避免 undefined 被重新定义值，建议使用 void 0;代替  
+避免 undefined 被重新定义值，建议使用 void 0;代替
 检验 0.1+0.2===0.3 的正确方法：
 
 ```js
 console.log(Math.abs(0.1 + 0.2 - 0.3) <= Number.EPSILON);
-```
+``` -->
 
 ## Docker
 

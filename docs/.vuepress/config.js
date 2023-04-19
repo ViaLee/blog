@@ -16,6 +16,19 @@ module.exports = {
     lastUpdated: "上次更新",
     nav: [
       {
+        text: "React🌴",
+        items: [
+          {
+            text: "底层",
+            link: "/pages/reactCode",
+          },
+          {
+            text: "其他",
+            link: "/pages/react",
+          },
+        ],
+      },
+      {
         text: "Basic 🐳",
         items: [
           {
@@ -51,19 +64,6 @@ module.exports = {
             text: "浏览器",
             link: "/pages/browser",
           },
-        ],
-      },
-      {
-        text:'React',
-        items: [
-          {
-            text: "底层",
-            link: "/pages/reactCode",
-          },
-          {
-            text: "其他",
-            link: "/pages/react",
-          }
         ],
       },
       {

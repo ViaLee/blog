@@ -31,15 +31,17 @@ module.exports.add = add;
 ```
 
 3. 加载某一个模块，就是加载这个模块的 module.exports 属性 ,require 的基本功能是读取并执行 JS 文件，如果模块导出的是一个函数，就不能定义在 exports 对象上。  
-require加载时，会执行模块中的代码，然后将模块的module.exports属性作为返回值进行返回。  
-require属性：  
+   require 加载时，会执行模块中的代码，然后将模块的 module.exports 属性作为返回值进行返回。  
+   require 属性：
+
 - resolve：需要解析的模块路径。
 - main：Module 对象，表示当进程启动时加载的入口脚本。
 - extensions：如何处理文件扩展名。
 - cache：被引入的模块将被缓存在这个对象中。  
-当我们在一个项目中多次require同一个模块时，CommonJS并不会多次执行该模块文件；  
-而是在第一次加载时，将模块缓存；  
-以后再加载该模块时，就直接从缓存中读取该模块.可以通过``delete require.cache[modulePath]``将缓存的模块删除。
+  当我们在一个项目中多次 require 同一个模块时，CommonJS 并不会多次执行该模块文件；  
+  而是在第一次加载时，将模块缓存；  
+  以后再加载该模块时，就直接从缓存中读取该模块.可以通过`delete require.cache[modulePath]`将缓存的模块删除。
+
 ```js
 require ={
   ...,
@@ -51,18 +53,22 @@ require ={
 ```
 
 #### **EJS**
+
 import 编译时加载，会优先执行（变量提升），是引用，是只读引用。也有缓存。
 
 #### **区别**
-通过上面我们对CommonJS规范和ES6规范的比较，我们总结一下两者的区别：
-- CommonJS模块是运行时加载，ES6模块是编译时输出接口
-- CommonJS模块输出的是一个值的复制，ES6模块输出的是值的引用
-- CommonJS加载的是整个模块，即将所有的方法全部加载进来，ES6可以单独加载其中的某个方法
-- CommonJS中this指向当前模块module.exports，ES6中this指向undefined
-- CommonJS默认非严格模式，ES6的模块自动采用严格模式
+
+通过上面我们对 CommonJS 规范和 ES6 规范的比较，我们总结一下两者的区别：
+
+- CommonJS 模块是运行时加载，ES6 模块是编译时输出接口
+- CommonJS 模块输出的是一个值的复制，ES6 模块输出的是值的引用
+- CommonJS 加载的是整个模块，即将所有的方法全部加载进来，ES6 可以单独加载其中的某个方法
+- CommonJS 中 this 指向当前模块 module.exports，ES6 中 this 指向 undefined
+- CommonJS 默认非严格模式，ES6 的模块自动采用严格模式
 
 #### **UMD**
-兼容CJS和EJS的处理，判断支持哪种类型直接应用。
+
+兼容 CJS 和 EJS 的处理，判断支持哪种类型直接应用。
 
 ### 错误类型
 
@@ -141,7 +147,7 @@ toString 按 string 类型返回值。
 
 <!-- ### 闭包
 
-闭包的应用场景？  
+闭包的应用场景？
 curry 函数，防抖节流，compose 函数 -->
 
 ## ES6+
@@ -302,8 +308,8 @@ let amap = new Map();
 data = data.filter((a) => !amap.has(a.value) && amap.set(a.value, 1));
 ```
 
-
+<!--
 ## 应用场景
 ### postMessage
 1. chrome插件，通讯
-2. 同一域名页面之间通讯
+2. 同一域名页面之间通讯 -->

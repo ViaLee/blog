@@ -26,6 +26,9 @@
    ```ejs
    <%- include('../../public/build-'+_system_env+'/header.html') -%>
    ```
+  
+3. antd全局样式污染问题  
+  没有发现好的解决办法、暂时通过覆盖解决
 
 ## 04/20 协助 App 解决问题
 

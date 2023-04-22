@@ -89,12 +89,12 @@ chrome 的 back/forward cache 机制
 <!-- ### 视频水印 -->
 <!-- canvas 定位文字，生成图片，放在video同级，用mutationObserve监听dom变化、属性变化，水印被删除时再生成一张 -->
 
-### antd global.less 重置的默认样式在混合框架项目中影响其他 UI 样式
+<!-- ### antd global.less 重置的默认样式在混合框架项目中影响其他 UI 样式
 
 解决思考：
 
 - 按需引入组件样式
-- 覆盖
+- 覆盖 -->
 
 <!-- ### Error TS1110 Build: Type expected
 ts版本低 -->

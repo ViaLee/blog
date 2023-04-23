@@ -74,8 +74,8 @@ module.exports = {
         text: "Blog ✍🏻",
         items: [
           // { text: "面试 📖", link: "/pages/interview" },
-          { text: "博客 ✍🏻", link: "/pages/blog" },
-          { text: "ERROR ❌", link: "/pages/log" },
+          { text: "博客", link: "/pages/blog" },
+          { text: "日常记录", link: "/pages/log" },
         ],
       },
       // { text: "杂记 🍀", link: "/pages/diary" },

@@ -64,7 +64,7 @@ chrome 的 back/forward cache 机制
 
 ## 2023
 
-### taro 项目编译 h5 白屏
+### 02/02 taro 项目编译 h5 白屏
 
 1. 部分安卓手机 UC 浏览器、苹果 safri 浏览器页面白屏；
    本地启动真机访问无异常  
@@ -84,17 +84,65 @@ chrome 的 back/forward cache 机制
 3. 编译报错，sass 中不支持/运算  
    打补丁，单独处理
 
-<!-- ### dumi & lerna 组件库打包问题 -->
+### 03/09 组件库打包优化
+
+包体积优化：
 
 <!-- ### 视频水印 -->
 <!-- canvas 定位文字，生成图片，放在video同级，用mutationObserve监听dom变化、属性变化，水印被删除时再生成一张 -->
 
-<!-- ### antd global.less 重置的默认样式在混合框架项目中影响其他 UI 样式
+### 04/14 Error TS1110 Build: Type expected
 
-解决思考：
+![tserror](./tserror.jpg)
 
-- 按需引入组件样式
-- 覆盖 -->
+ts 版本过低,缺少部分类型定义,升级
 
-<!-- ### Error TS1110 Build: Type expected
-ts版本低 -->
+```
+"typescript": "^3.7.5"
+"typescript": "4.2.4",
+```
+
+### 04/19 egg 混合 react 页面项目
+
+老项目采用 egg、jquery 开发、部分页面采用 react 重构、目前方案是将新页面放在一个 react 项目内打包放在老项目里，路由直接读取打包后的产物，问题：
+
+1. 统一导航栏，新老页面都是用 react 中的导航栏  
+    将导航栏单独打包输出，在老页面读取产物
+
+   ```js
+   //webpack 配置
+   webpackConfig.entry = {
+     header: path.resolve(__dirname, "./src/header.tsx"),
+   };
+   plugins: [
+     new htmlWebpackPlugin({
+       filename: "header.html",
+       chunks: ["header"],
+       template: path.resolve(__dirname, "./public/header.html"),
+     }),
+   ];
+   ```
+
+2. 需要区分环境读取对应的 build 包，全局变量\_system_env 通过中间件统一传入
+
+   ```ejs
+   <%- include('../../public/build-'+_system_env+'/header.html') -%>
+   ```
+
+3. antd 全局样式污染问题  
+   没有发现好的解决办法、暂时通过覆盖解决
+
+### 04/20 协助 App 解决问题
+
+#### 内嵌 H5 页面获取 app 的 token，首次未获取到
+
+安卓环境，清除缓存后重新登录 App，进入 h5 页面，未获取到 token，第二次进入 h5 页面正常。
+
+- h5 页面 PC、H5、App 共用，需要区分当前环境
+- token 有三种情况、H5 自身登录、PC 跳转 URL 带入、App 登录获取
+- 区分是否首次从 App 进入，决定是否要获取 App token
+
+#### app 内退出登录需要跳转到 App 登录页
+
+- 区分环境
+- 跳转 URL Schema

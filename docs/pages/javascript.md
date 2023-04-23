@@ -227,6 +227,8 @@ for (var prop in obj) {
 
 ### Promise
 
+#### 用法
+
 ```js
 Promise.reject("error")
   .then(
@@ -270,6 +272,8 @@ Promise.reject("error")
 // error
 // success2
 ```
+
+<!-- #### 手写 promise -->
 
 ## 数据处理
 

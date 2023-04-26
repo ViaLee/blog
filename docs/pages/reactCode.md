@@ -1,5 +1,11 @@
 # React
 
+## react 启动模式
+
+- legacy 模式：` ReactDOM.render(<App />, rootNode)`。这是当前 React app 使用的方式。当前没有计划删除本模式，但是这个模式可能不支持这些新功能。
+- blocking 模式： `ReactDOM.createBlockingRoot(rootNode).render(<App />)`。目前正在实验中。作为迁移到 concurrent 模式的第一个步骤。
+- concurrent 模式： `ReactDOM.createRoot(rootNode).render(<App />)`。目前在实验中，未来稳定之后，打算作为 React 的默认开发模式。这个模式开启了所有的新功能。
+
 ## 完整流程
 
 触发更新（ReactDom.render,classcomponent,fncomponent）  
@@ -15,6 +21,22 @@ render 阶段
 &emsp;&emsp;|  
 &emsp;&emsp;↓  
 commit 阶段
+
+## hooks 闭包缺陷
+
+1. 与 classConponents 不同，不是用`this.`获取 state 的值，而是直接获取，这样在类似 setTimeout 的函数中读取的值不是最新值。
+
+## setState 同步异步
+
+### reactV15
+
+- 根据 `excutionContext` 有值(Y 异 N 同)，在一个上下文中同时触发多次更新，这些更新会合并成一次更新
+- 根据 `isBatchingUpdates` true(Y 异 N 同)
+
+同步更新/不合并：原生事件、异步代码
+异步更新/合并：React 合成事件、生命周期钩子、在原生事件和异步代码中使用`ReactDOM.unstable_batchedUpdates`
+
+### reactV16.8
 
 ## 时间切片
 

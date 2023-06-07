@@ -74,13 +74,13 @@ module.exports = {
         text: "Blog ✍🏻",
         items: [
           // { text: "面试 📖", link: "/pages/interview" },
-          { text: "博客", link: "/pages/blog" },
           { text: "日常记录", link: "/pages/log" },
+          { text: "博客", link: "/pages/blog" },
         ],
       },
       // { text: "杂记 🍀", link: "/pages/diary" },
     ],
-    search: false,
+    search: true,
     sidebar: "auto", // 侧边栏配置
     sidebarDepth: 3, // 侧边栏显示2级
   },

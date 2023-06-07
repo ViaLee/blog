@@ -33,36 +33,36 @@ Flutter 的 Release 包默认是使用 Dart AOT 模式编译的，所以不支�
 flutter doctor
 ```
 
+可能会有如下问题：
+
+1. Xcode 未授权
+   ![对比](./flutter1.png)
+   解决： 运行 sudo xcodebuild -license
+2. xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer xxxxx is a command line tools instance
+   解决： 修改 xcode 配置
+   ![对比](./flutter3.png)
+3. cocoapods 没安装
+   运行 sudo gem install cocoapods
+
 #### 全局变量（mac）
 
 zsh: command not found: flutter
 
 ```bash
 open ~/.bash_profile
-export PATH=/Users/USERNAME/development/flutter/bin:$PATH
+#把下面这行写入进去
+export PATH=/Users/USERNAME/development/flutter/bin:$PATH  #你的flutter下载路径
+#然后执行
 source ~/.bash_profile
 ```
 
+如果写在 bash_profile 中，每次终端重启都要 source 一下，所以建议把所有环境变量配在.zshrc 中  
 zsh:  
 将 bash_profile 中的配置 copy 到 ~/.zshrc
 
 ```
 source ~/.zshrc
 ```
-
-### 模拟器
-
-#### Xcode
-
-xcode 授权  
-sudo xcodebuild -license
-
-#### Android Studio
-
-<!--
-CocoaPods  监控文件变化
-sudo gem install cocoapods
- -->
 
 ## 创建并运行一个 flutter 项目
 
@@ -103,14 +103,21 @@ command shift p 执行
 `lib src`  
 `assets` 静态文件  
 `test` 测试代码  
-`pubspec.yaml` 配置依赖项文件,类似 package.json
+`pubspec.yaml` 配置依赖项文件
 
 - [Pub](https://pub.dev/) Dart Packages 仓库  
-  加依赖后需要 futter pug get、重启项目
+  加依赖后需要 flutter pub get、重启项目
 
 - 本地包、git 包
 
+flutter 版本和 dart 版本是一一对应的。参考[sdk 列表](https://flutter.cn/docs/development/tools/sdk/releases)
+项目 dart 运行环境要求和本地 flutter 版本不一致可能会导致某些依赖包使用不了。
+
 ```yaml
+# dart运行环境要求
+environment:
+  sdk: ">=2.19.2 <3.0.0"
+
 dependencies:
 	 pkg1:
         path: ../../code/pkg1
@@ -373,5 +380,6 @@ Widget build(BuildContext context){
 
 > 学习参考  
 > [flutter 实战](https://book.flutterchina.club/)  
+> [flutter widgets 文档](https://api.flutter-io.cn/flutter/widgets/AbsorbPointer-class.html)  
 > [flutter 官网](https://flutter.cn/docs/get-started/install)  
 > [Dart 官网](https://dart.cn/)

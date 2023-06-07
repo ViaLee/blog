@@ -269,8 +269,6 @@ B 居然都是小彬主作词作曲[跪了]wsl，专辑制作人[跪了]，对�
 
 # 2022
 
-## 随便记记
-
 ### 3/18 周五
 
 小区 48 小时核酸排查，六点终于结束了，零食都吃完了，可以出门续点了  
@@ -495,3 +493,7 @@ chrome 插件,发版优化。
 
 - react 底层
 - webpack loader、plugin
+
+### 5 月
+
+Cause I dont sure what sort of people are you looking forward,I`ll just tell my skill in the realm of front-end development.Thats a little long story.I found I was interested in developing the static website pages when we had a subject of JSP.

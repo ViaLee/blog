@@ -2,6 +2,39 @@
 
 ## 基础
 
+### Reflect
+
+- Reflect 暴露语言内部方法
+  ```js
+  // 老写法
+  Function.prototype.apply.call(Math.floor, undefined, [1.75]); // 1
+  // 新写法
+  Reflect.apply(Math.floor, undefined, [1.75]); // 1
+  ```
+- 未定义属性，不报错，返回 false
+- 让 Object 命令式操作变为函数行为
+  ```js
+  // 老写法
+  "assign" in Object; // true
+  // 新写法
+  Reflect.has(Object, "assign"); // true
+  ```
+- 保留 Proxy 的所有默认行为
+
+  ```js
+  Proxy(target, {
+    set: function (target, name, value, receiver) {
+      var success = Reflect.set(target, name, value, receiver);
+      if (success) {
+        console.log("property " + name + " on " + target + " set to " + value);
+      }
+      return success;
+    },
+  });
+  ```
+
+-
+
 ### script 标签
 
 六属性：async(异步脚本) defer(延迟脚本) src type(MIME 类型) crossorigin  

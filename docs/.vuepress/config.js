@@ -68,7 +68,16 @@ module.exports = {
       },
       {
         text: "Node ☁️",
-        link: "/pages/node",
+        items: [
+          {
+            text: "node",
+            link: "/pages/node",
+          },
+          {
+            text: "nest",
+            link: "/pages/nest",
+          },
+        ],
       },
       {
         text: "Blog ✍🏻",

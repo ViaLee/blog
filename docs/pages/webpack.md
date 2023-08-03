@@ -65,17 +65,22 @@ module.exports = {
 };
 ```
 
-## plugin 和 loader
+## loader 和 plugin
 
 **`loader`**：模块转换器。  
-将非 js 模块转化为 webpack 能识别的 js 模块，将 A.less 转换为 A.css。  
-webpack 自身只支持 js 和 json 这两种格式的文件。  
+webpack 自身只支持 js 和 json 这两种格式的文件。loader 将非 js 模块转化为 webpack 能识别的 js 模块，如将 A.less 转换为 A.css。  
+loader 分为：pre,normal,inline,post(执行顺序)  
+内联 loader 前缀：!跳过 normal，-!跳过 pre/normal，!!跳过 pre,normal,post loader。  
+loader 如果有 pitch 方法，则先按顺序执行 pitch 方法，pitch 如果有返回值，则会打断顺序执行，直接执行该 loader 的前一个 loader，并向前执行。
+![loader](./loader.png)
 loader 的执行顺序和配置中的顺序是相反的，即最后一个 loader 最先执行，第一个 loader 最后执行。第一个执行的 loader 接收源文件内容作为参数，其它 loader 接收前一个执行的 loader 的返回值作为参数，最后执行的 loader 会返回此模块的 JavaScript 源码。  
-**本质**：将所有类型的文件转换为应用程序的依赖图可直接引用的模块。  
+**本质**：将所有类型的文件转换为应用程序的依赖图可直接引用的模块。
+
 **`plugin`**:拓展  
 针对 loader 结束后，基于事件机制工作，会监听 webpack 打包过程中的某些节点。
-在 webpack 运行的生命周期中会广播出许多事件，plugin 可以监听这些事件，在合适的时机通过 webpack 提供的 API 改变输出结果。  
-**`compliation`**：包含当前模块资源，编译生成资源，webpack 开发模式下运行时，当检测到任意一个文件变化，都会创建一次新的 compliation
+在 webpack 运行的生命周期中会广播出许多事件，plugin 可以监听这些事件，在合适的时机通过 `tapable` 提供的 API 改变输出结果。
+
+**`compliation`**：包含当前模块资源，编译生成资源，webpack 开发模式下运行时，当检测到任意一个文件变化，都会创建一次新的 compliation。
 
 ## 打包流程
 
@@ -212,3 +217,56 @@ const config = {
 1.拆分 bundle, 可利于 http2 多路复用以及更利于缓存  
 2.源代码 no bundle  
 3.预打包依赖产物 esbuild、cdn
+
+# Babel
+
+## 执行顺序配置
+
+js 翻译器：解析、转换、生成  
+`preset`预设的插件合集：  
+低一级的 stage 会包含所有高级 stage 的内容，例如 stage-1 会包含 stage-2, stage-3 的所有内容。
+执行顺序：  
+plugin、preset；  
+plugin 从前往后执行；  
+preset 从后往前执行。（为了向后兼容，编排时需注意规范的时间顺序）
+
+```json
+{
+  "presets": [
+    [
+      // 带了配置项，自己变成数组
+      "env",
+      // 第二个元素是对象，列出配置项
+      {
+        "module": false, //amd, umd, systemjs, commonjs 和 false。这可以让 babel 以特定的模块化格式来输出代码。false 不进行模块化处理。
+        "targets": {
+          "browsers": ["last 2 versions", "safari >= 7"], // 考虑所有浏览器的最新2个版本(safari大于等于7.0的版本)的特性
+          "node": "6.10" // 将目标设置为 nodejs，并且支持 6.10 及以上的版本，也可以node: 'current' 来支持最新稳定版本
+        }
+      }
+    ],
+    // 不带配置项，直接列出名字
+    "stage-2"
+  ]
+}
+```
+
+## 各种 babel 包
+
+`babel-cli`: devDependencies，编译文件，适用于不需要打包的小小项目  
+`babel-register`: devDependencies，对 require 加载的文件进行转码  
+`babel-polyfill`: dependencies，对缺失的方法给与支持，用其他方式实现  
+缺点：
+
+- 作为一个整体，在原型链上添加方法，使代码冗余 （推荐使用 core-js）
+- 污染全局变量（推荐使用 babel-plugin-transform-runtime）
+
+`babel-node`: part of `babel-cli`，直接执行 js。 babel-node = babel-polyfill + babel-register  
+`babel-plugin-transform-runtime`: 将替代方法以 require 的方式引入，而不是每次添加。  
+`babel-runtime`: 内部集成了
+
+- `core-js`: 类支持
+- `regenerator`: core-js 的补丁，如转换 generator/yield 和 async/await
+- `helpers`: [babel-helpers](https://github.com/babel/babel/blob/6.x/packages/babel-helpers/src/helpers.js)
+
+`babel-loader`: 用于打包构建

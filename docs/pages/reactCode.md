@@ -1,5 +1,27 @@
 # React
 
+设计理念：快速响应  
+制约因素：CPU、IO  
+节流防抖：限制触发更新频率  
+React 通过异步可中断更新解决 CPU 瓶颈；  
+将人机交互的成果融入 UI 交互，使异步无感知。
+
+## useEffect
+
+Commit 阶段：
+
+- beforeMutation
+  检测到 useEffect,调度 flushPassiveEffects
+- mutation
+- layout
+  注册 destroy、create 到 flushPassiveEffects 上
+- commit 完成后
+  执行 flushPassiveEffects，判断是否为 mount 阶段，即 current 是否为 null，如果为 null，则不会执行 destroy
+
+对于页面刷新、关闭、跳转相当于实例销毁，于 useEffect 无关。  
+useEffect 是异步执行，因为从检测到实际执行经历了多个阶段，原因是：防止同步执行阻塞浏览器渲染。  
+useLayoutEffect 则是在 mutation 阶段执行 destroy 回调，在 layout 阶段同步执行。
+
 ## react 启动模式
 
 - legacy 模式：` ReactDOM.render(<App />, rootNode)`。这是当前 React app 使用的方式。当前没有计划删除本模式，但是这个模式可能不支持这些新功能。
@@ -8,23 +30,43 @@
 
 ## 完整流程
 
-触发更新（ReactDom.render,classcomponent,fncomponent）  
-&emsp;&emsp;|  
-&emsp;&emsp;|  
-&emsp;&emsp;↓  
-&emsp;调度  
-&emsp;&emsp;|  
-&emsp;&emsp;|  
-&emsp;&emsp;↓  
-render 阶段  
-&emsp;&emsp;|  
-&emsp;&emsp;|  
-&emsp;&emsp;↓  
-commit 阶段
+### 触发更新
+
+ReactDom.render,classcomponent,fncomponent
+
+### 调度
+
+### render 阶段
+
+采用深度优先遍历，递归的方式遍历  
+递阶段：
+遍历每个节点的 fiber 调用 beginWork 方法
+mount:
+
+- 根据 fiber.tag 创建当前 fiber 节点的第一个子 fiber 节点
+- 标记 effectTag
+
+update:
+
+- 满足一定条件时克隆 current.child 作为 workInProgress.child
+- diff
+- 创建 fiber 初始化 dom 属性
+
+**当遍历到叶子节点时就会进入到归阶段**
+归阶段：completeWork
+
+### commit 阶段
 
 ## hooks 闭包缺陷
 
-1. 与 classConponents 不同，不是用`this.`获取 state 的值，而是直接获取，这样在类似 setTimeout 的函数中读取的值不是最新值。
+与 classComponents 不同，不是用`this.`获取 state 的值，而是直接获取，这样在类似 setTimeout 的函数中读取的值不是最新值。  
+ functionComponents 中使用 hooks 存储、更新状态，内部也是通过闭包获取状态值，每次更新都会生成一个新的闭包。  
+ 闭包缺陷分为两种：
+
+- useState 的 setState 可能取不到最新值
+  避免方法：使用回调方式更新值
+- useEffect 中在 setTimeout 中读取 state，取不到最新值
+  避免方法：：添加依赖，每次渲染都更新读取的这个 state
 
 ## setState 同步异步
 

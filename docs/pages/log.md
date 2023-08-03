@@ -4,6 +4,85 @@
 
 ## 2023
 
+### 7/25 组件库发版 缓存问题
+
+背景：业务组件库打包成 umd 并放在 oss 服务器上存储，工作台项目通过 cdn 获取该打包结果，并用其提供的业务组件配置页面保存后发布该页面，在用户端即可访问配置的页面。  
+问题：get 请求缓存。组件库发版后，用户访问的页面组件并没有更新。  
+解决：因此目前解决方案是在配置页面时请求 umd 地址后加一个版本号，每次都得手动修改，从而使用户端发送最新版本的请求。  
+问题：cdn 缓存。cdn 接收到客户端发送来的请求，如果该版本本地已经存在，则直接返回，如果不存在，则请求存储服务器获取最新的资源。 除此之外 cdn 也会定期拉取。
+
+### 7/18 给高度 auto 的 dom 动画过渡
+
+好奇 ant-collapse 的展开收起动画效果怎么做的，内容自适应
+
+```css
+div {
+  max-height: 0;
+  transition: 1s;
+}
+.wrap :hover div {
+  max-height: 800px; /*大概的值，需要超过元素高度*/
+}
+```
+
+### 7/10 浏览器非激活状态 setInterval、setTimeout 会停止运行
+
+浏览器优化策略，非激活状态的
+
+1.使用 worker 计算
+
+```js
+// main.js
+initCountWorker(){
+  const self = this;
+        if (window.Worker) {
+            var worker = new Worker(`/public/src/js/utils/count-worker.js`);
+            self.state.countWorker = worker;
+            worker.postMessage(initTime);
+            worker.onmessage = function (e) {
+                self.state.timeCount = e.data * 1000;
+                const countdown = getCountdown(e.data * 1000);
+                const { hour, minute, second } = countdown;
+                $('.tiku-detail-time').html(`倒计时：${hour} : ${minute} : ${second}`);
+                if (e.data === 0) {
+                    if (!this.state.isUpload) {
+                        layer.msg('文件正在上传，请稍后提交');
+                        return;
+                    }
+
+                    _this.submitExam();
+                }
+            };
+        }
+}
+
+// worker.js
+console.log("count-worker 启动");
+const self = this;
+onmessage = function (e) {
+  let initTime = e.data;
+  console.log("初始剩余时间", initTime);
+  const T = setInterval(() => {
+    self.postMessage(--initTime);
+    if (initTime <= 0) {
+      clearInterval(T);
+      self.close();
+    }
+  }, 1000);
+};
+```
+
+2. window.onFocus 切回来重新调接口获取最新时间
+   window.onFocus 小屏切换也会触发，只要页面被聚焦
+
+### 6/15 源码 map 文件请求混杂报错
+
+和打包开启源文件有关
+
+```
+url = /web/exam/answer_sheet/runtime-header.83184b99.js.map
+```
+
 ### 5/30 css 梯形
 
 ```css

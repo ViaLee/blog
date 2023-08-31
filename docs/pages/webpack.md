@@ -15,8 +15,8 @@ ESModule，commenJs，AMD，Assets
 - import binding 是 immutable 的
 
 **引入方式**：  
- **`ESModule`**：export，import  
- **`commenJs`**：module.exports，require
+ **`ESModule`**：export，import(import a from 'a' 引入的是 a[default])  
+ **`commenJs`**：module.exports，require(import 的是整个 module)
 
 ## chunk 和 bundle
 
@@ -69,7 +69,7 @@ module.exports = {
 
 **`loader`**：模块转换器。  
 webpack 自身只支持 js 和 json 这两种格式的文件。loader 将非 js 模块转化为 webpack 能识别的 js 模块，如将 A.less 转换为 A.css。  
-loader 分为：pre,normal,inline,post(执行顺序)  
+loader 分为：pre,normal,inline,post(normal 执行顺序)  
 内联 loader 前缀：!跳过 normal，-!跳过 pre/normal，!!跳过 pre,normal,post loader。  
 loader 如果有 pitch 方法，则先按顺序执行 pitch 方法，pitch 如果有返回值，则会打断顺序执行，直接执行该 loader 的前一个 loader，并向前执行。
 ![loader](./loader.png)
@@ -126,6 +126,16 @@ filename:"[name].js"  // 输出bundle的文件名
     }
   }
 }
+```
+
+将外部依赖打成单独的包时，是如何引入的
+
+```js
+// 伪代码，隐藏了 moment 和 js-cookie 的代码细节
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["async"],{
+  "./node_modules/js-cookie/src/js.cookie.js": (function(module, exports, __webpack_require__) {}),
+  "./node_modules/moment/moment.js": (function(module, exports, __webpack_require__) {})
+})
 ```
 
 ## Tree Shaking

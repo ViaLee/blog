@@ -30,32 +30,65 @@ useLayoutEffect 则是在 mutation 阶段执行 destroy 回调，在 layout 阶�
 
 ## 完整流程
 
-### 触发更新
+### 更新流程
 
-ReactDom.render,classcomponent,fncomponent
+触发更新的方法：ReactDOM.render,setState,forceUpdate,useState,useReducer  
+每次触发更新会创建一个 Update，存储更新相关。保存在 pending（环状链表）中
 
-### 调度
+dispatchAction 触发更新
 
-### render 阶段
+- (调度)`scheduleUpdateOnFiber` 调度 Update
+- `markUpdateLaneFromFiberToRoot` 从触发更新的 fiber 向上遍历到 rootFiber 触发深度优先遍历
+- 调度 rootFiber，`ensureRootIsScheduled`，标记过期未执行的类，判断当前任务优先级，获取当前优先级最高的类
+- 调度 `performConcurrentWorkOnRoot` 或 `performSyncWorkOnRoot` 进入 render 阶段
 
-采用深度优先遍历，递归的方式遍历  
-递阶段：
-遍历每个节点的 fiber 调用 beginWork 方法
-mount:
+render 阶段入口 performConcurrentWorkOnRoot
 
-- 根据 fiber.tag 创建当前 fiber 节点的第一个子 fiber 节点
-- 标记 effectTag
+commit 阶段入口 commitRoot
 
-update:
+### Update 计算
 
-- 满足一定条件时克隆 current.child 作为 workInProgress.child
-- diff
-- 创建 fiber 初始化 dom 属性
+低于本次更新优先级的 state 不参与计算，计算完之后以新 state 为 initialstate 恢复上次计算
 
-**当遍历到叶子节点时就会进入到归阶段**
-归阶段：completeWork
+```js
+Update:{ //对象（两种 FC,CC） 保存在 fiber.updateQueue 中
+  eventTime,
+  lane,
+  suspenseConfig,
+  tag, //更新类型
+  payload, //新数据
+  callback, //更新回调
+  next
+}
 
-### commit 阶段
+UpdateQueue:{
+  baseState,
+  firstBaseUpdate,lastBaseUpdate, //已存在的 update 链表，头尾，如上次被打断的 update
+  shared.pending, //本次更新产生的 Update 环状链表，在 render 阶段会被剪开，连接到 lastBaseUpdate 后
+  effects:[] callback
+}
+```
+
+遍历 `updateQueue.baseUpdate` 链表，以 `updateQueue.baseState` 为初始 state，依次计算产生新的 state（memoizedState）
+
+**被打断的低优先级 update 如何不丢失?**  
+render 阶段：  
+ 被剪开的环状链表 `shared.pending` 会同时保存在 `workInProgress`和 `current` 的 `updateQueue.lastBaseUpdate` 后  
+ 被中断后重新开始时，会基于 `current` 的 `updateQueue.lastBaseUpdate` 克隆出 `workInProgress` 的 `updateQueue`.`lastBaseUpdate`
+commit 阶段：  
+ 渲染完成，workInProgress 变成 current，也不会丢失
+
+**高优先级 update 优先计算出 state 同时如何保持依赖连续性？**  
+ 被跳过的低优先级 update 以及后面的所有 update 会作为下一次计算的 baseUpdate，因此不会丢失
+
+### 优先级调度
+
+NoPriority 0 初始化
+ImmediatePriority 1 同步，最高
+UserBlockingPriority 2 用户交互 点击事件
+NormalPriority 3 ajax
+LowPrority 4 suspense
+IdlePriority 5
 
 ## hooks 闭包缺陷
 
@@ -202,13 +235,36 @@ function shouldYieldToHost() {
 
 ## render 阶段
 
+采用深度优先遍历，递归的方式遍历  
+递阶段：
+遍历每个节点的 fiber 调用 beginWork 方法
+mount:
+
+- 根据 fiber.tag 创建当前 fiber 节点的第一个子 fiber 节点
+- 标记 effectTag
+
+update:
+
+- 满足一定条件时克隆 current.child 作为 workInProgress.child
+- diff
+- 创建 fiber 初始化 dom 属性
+
+**当遍历到叶子节点时就会进入到归阶段**
+归阶段：completeWork
+
 ### diff
+
+本质：对比 current fiber 和 jsx 对象，生成 workInProgress Fiber。源码中的入口函数为 reconcileChildFibers
 
 限制：
 
 1. 同级
 2. 同种元素
 3. 可通过设置 key 打破限制 2
+
+判断当前 newChild
+单一节点：是否 React.Fragment，是否 Object  
+多节点: 是否 array
 
 diff 分两种情况：
 
@@ -218,11 +274,23 @@ diff 分两种情况：
 2. 多节点
    对比更新前后的 nodeList,为 node 标记 flag,需要考虑是以下三种情况的哪种情况：
 
-- 节点属性变化
+- 节点更新(属性变化)、类型变化
 - 节点增删
 - 节点位置移动  
   三种情况的处理逻辑不同，1 情况更常见。  
   经历两轮遍历，首轮优先处理常见情况 1，第二轮后其他情况。
+
+  数组与数组对比，采用双指针的方式，newjsx 数组和 fiber 链表的比较，采用两轮遍历。  
+  第一轮遍历：newChildren[i] 与 oldFiber 比较，是否可复用，可复用继续比较 newChildren[i+1] 与 oldFiber.subling
+  跳出的条件：
+
+  1. 不可复用：
+
+  - key 不同，结束第一轮
+  - key 相同，类型不同，oldFiber 标记 DELETION，基于 jsx 创建新的 fiber，继续遍历
+
+  2. newChildren 遍历完或 oldFiber 遍历完或同时遍历完  
+     第一轮结束返回 resultingFirstChild, 第一个 workinprogressfiber
 
 ```js
 // 虚拟dom节点数据结构
@@ -301,8 +369,100 @@ diff(before, after) 输出
 */
 ```
 
-### update 计算
-
-### 优先级调度
-
 ## commit 阶段
+
+## Hooks
+
+### useState
+
+```js
+let isMount = true; //在react中通过currentFiber判断
+const workInProgressHook = null //当前正在执行的hook
+
+// FC的fiber
+const fiber: {
+  memorizedState:null, //fiber中保存的第一个hook
+  stateNode: 当前FC
+}
+
+// 触发更新
+function run() {
+  workInProgressHook = fiber.memorizedState
+  // 模拟schedule render commit流程
+  // 遍历updateQueue,计算state
+
+  // render、commit阶段
+  const fc = fiber.stateNode()
+  isMount = false;
+  return fc
+}
+
+// 处理update
+function dispatchAction(queue,action) {
+  // 创建update,并存入环状链表中 hook.queue.pengding
+  const update = {
+    action,
+    next:null
+  }
+  if (queue.pending===null) {
+    //不存在
+    // 创建环状链表，首尾指向自己
+    update.next = update
+  } else {
+    // 插入环状链表中
+    update.next = queue.pending.next
+    queue.pending.next = update
+  }
+    queue.pending = update
+}
+
+// 处理hook
+function useState(initialState) {
+  let hook;
+
+// 准备当前hook
+  if(isMount){
+// 第一次 创建新的hook
+    hook = {
+      queue:{
+        pending:null  //TODO:是update?
+      },
+      memorizedState: initialState,
+      next: null
+    }
+
+    if(!fiber.memorizedState){
+      // 首个hook 存入fiber中
+      fiber.memorizedState = hook
+    }else{
+      // TODO: 此处workInProgressHook 已是fiber.memorizedState？
+      // 如果fiber中有hook，则把当前的hook作为下一个hook
+      workInProgressHook.next = hook
+    }
+  } else {
+    // 获取当前hook
+    hook = workInProgressHook;
+    workInProgressHook = workInProgressHook.next  //下一个待执行的hook
+  }
+
+
+// 计算state，根据memorizedState,和update计算剩余的update,newState
+  let baseState = hook.memorizedState  //上次计算得出的state
+  if(hook.queue.pending){
+    let firstUpdate = hook.queue.pending.next  //这个pending从哪来
+
+// 遍历hook.queue
+    do{
+      let action = firstUpdate.action
+      baseState = action(baseState)
+      firstUpdate = firstUpdate.next
+    }while(firstUpdate !== hook.queue.pending.next)
+
+    hook.queue.pending = null
+  }
+
+  hook.memorizedState = baseState
+
+  return [baseState, dispatchAction.bind(null,hook.queue)];
+}
+```

@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[15],{360:function(n,e,t){"use strict";t.r(e);var u={name:"log",data:()=>({number:1}),mounted(){}},l=t(17),o=Object(l.a)(u,(function(){return(0,this._self._c)("div")}),[],!1,null,null,null);e.default=o.exports}}]);

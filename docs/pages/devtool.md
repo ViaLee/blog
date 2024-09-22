@@ -3,11 +3,11 @@
 - Web Vitals
 - Collect rubbish: 点击其强制进行垃圾收集。
 
-- DCL DOMContentLoaded html 加载解析完成
-- FP first paint 第一个像素
 - FPS first contentful paint 文字、图片、非空白的 canvas 或 SVG 等
-- LCP lagest contentful paint 可视区域内尺寸最大元素完成渲染时间
+- FP first paint 第一个像素
 - FCP
+- DCL DOMContentLoaded html 加载解析完成
+- LCP lagest contentful paint 可视区域内尺寸最大元素完成渲染时间
 - L onload 所有资源加载完成
 
 单独分层

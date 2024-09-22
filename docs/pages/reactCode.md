@@ -6,22 +6,6 @@
 React 通过异步可中断更新解决 CPU 瓶颈；  
 将人机交互的成果融入 UI 交互，使异步无感知。
 
-## useEffect
-
-Commit 阶段：
-
-- beforeMutation
-  检测到 useEffect,调度 flushPassiveEffects
-- mutation
-- layout
-  注册 destroy、create 到 flushPassiveEffects 上
-- commit 完成后
-  执行 flushPassiveEffects，判断是否为 mount 阶段，即 current 是否为 null，如果为 null，则不会执行 destroy
-
-对于页面刷新、关闭、跳转相当于实例销毁，于 useEffect 无关。  
-useEffect 是异步执行，因为从检测到实际执行经历了多个阶段，原因是：防止同步执行阻塞浏览器渲染。  
-useLayoutEffect 则是在 mutation 阶段执行 destroy 回调，在 layout 阶段同步执行。
-
 ## react 启动模式
 
 - legacy 模式：` ReactDOM.render(<App />, rootNode)`。这是当前 React app 使用的方式。当前没有计划删除本模式，但是这个模式可能不支持这些新功能。
@@ -466,3 +450,111 @@ function useState(initialState) {
   return [baseState, dispatchAction.bind(null,hook.queue)];
 }
 ```
+
+### useEffect
+
+Commit 阶段：
+
+- beforeMutation
+  检测到 useEffect,调度 flushPassiveEffects
+- mutation
+- layout
+  注册 destroy、create 到 flushPassiveEffects 上
+- commit 完成后
+  执行 flushPassiveEffects，判断是否为 mount 阶段，即 current 是否为 null，如果为 null，则不会执行 destroy
+
+对于页面刷新、关闭、跳转相当于实例销毁，于 useEffect 无关。  
+useEffect 是异步执行，因为从检测到实际执行经历了多个阶段，原因是：防止同步执行阻塞浏览器渲染。  
+useLayoutEffect 则是在 mutation 阶段执行 destroy 回调，在 layout 阶段同步执行。
+
+## Context
+
+定义、赋值、消费  
+React 性能一大关键在于，减少不必要的 render。  
+Context 会通过 Object.is()，即 === 来比较前后 value 是否严格相等。这里可能会有一些陷阱：当注册 Provider 的父组件进行重渲染时，会导致消费组件触发意外渲染。  
+当每一次 Provider 重渲染时，以下的代码会重渲染所有消费组件，因为 value 属性总是被赋值为新的对象。
+
+当 context value 发生变化时（这里使用的是 Object.is，通常我们传递的 value 都是一个复杂对象类型，它将比较两个对象的引用地址是否相同，若引用地址未发生变化，则会进入 bailout 复用当前 Fiber 节点，在 bailout 中，会检查该 Fiber 的所有子孙 Fiber 是否存在 lane 更新。若所有子孙 Fiber 本次都没有更新需要执行，则 bailout 会直接返回 null，整棵子树都被跳过更新），创建一个更新，并进行深度优先遍历子节点，检查消费组件 fiber 中的 dependence，遍历对比当前更新的 context，如果一致则标记该 fiber 的 lane 属性，
+
+```js
+const ctx = createContext(0);
+
+function App() {
+  return (
+    <ctx.Provider value={1}>
+      <ctx.Provider value={2}>
+        <ctx.Provider value={3}>
+          <Cpn /> {/* 3 */}
+        </ctx.Provider>
+        <Cpn /> {/* 2 */}
+      </ctx.Provider>
+      <Cpn /> {/* 1 */}
+    </ctx.Provider>
+  );
+}
+
+function Cpn() {
+  const num = useContext(ctx);
+  return <div>{num}</div>;
+}
+```
+
+```js
+function createContext(initialValue) {
+  const context = {
+    $$typeof: REACT_CONTEXT_TYPE,
+    _currentValue: initialValue,
+    Provider: null,
+  };
+
+  // context.Provider = ({ children, value }) => {
+  //   context.value = value;
+  //   return <div>{children}</div>;
+  // };
+
+  context.Provider = {
+    $$typeof: REACT_PROVIDER_TYPE,
+    _context: context,
+  };
+
+   context.Consumer = context;
+
+  return context;
+}
+
+function useContext(context) {
+  const contextItem = {
+    context
+    next:null //链表，同一组件上注册的多个context
+  }
+// 是否已有context
+if(lastContextDependency===null){
+   lastContextDependency = contextItem;
+   currentlyRenderFiber.dependencies = {
+    lanes: NoLanes,
+    firstContext: contextItem,
+    responders: null,
+  };
+}else{
+  lastContextDependency = lastContextDependency.next = contextItem
+}
+  return context._currentValue;
+}
+
+const preContextValueStack = [];
+let preContextValue = null;
+
+function pushProvider(context, newValue) {
+  preContextValueStack.push(preContextValue._currentValue);
+
+  preContextValue = newContext._currentValue;
+  context._currentValue = newValue;
+}
+
+function popProvider(context) {
+  context._currentValue = preContextValue;
+  preContextValue = preContextValueStack.pop();
+}
+```
+
+## scheduler

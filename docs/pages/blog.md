@@ -1,98 +1,63 @@
-# 2023
+## iframe 限制嵌套
 
-## 组件库发布 t 环境构建失败
+防止点击劫持
 
-组件库项目这个版本使用 lerna 进行了分包，并将 father 版本从 1^ 升至了 4^  
-发布时如下报错：
+1. CSP: frame-ancestors
+2. X-Frame-Options
+3. framekiller
 
-```txt
-+ npm run build:test
-
-> root@1.0.111 build:test
-> cross-env CROSS_ENV='t-' npm run build:cdn && npm run docs:build && npm run copyUmd
-
-npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
-npm WARN logfile error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
-npm WARN logfile errno: -13,
-npm WARN logfile code: 'EACCES',
-npm WARN logfile syscall: 'scandir',
-npm WARN logfile path: '/root/.npm/_logs'
-npm WARN logfile }
-
-> root@1.0.111 build:cdn
-> lerna run build
-
-lerna notice cli v4.0.0
-lerna info versioning independent
-lerna info ci enabled
-lerna info Executing command in 2 packages: "npm run build"
-lerna ERR! npm run build exited 1 in '@myun/common-component'
-lerna ERR! npm run build stdout:
-
-> @myun/common-component@0.0.13 build
-> father build
-
-lerna ERR! npm run build stderr:
-npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
-npm WARN logfile error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
-npm WARN logfile errno: -13,
-npm WARN logfile code: 'EACCES',
-npm WARN logfile syscall: 'scandir',
-npm WARN logfile path: '/root/.npm/_logs'
-npm WARN logfile }
-node:internal/fs/utils:347
- throw err;
- ^
-
-Error: EACCES: permission denied, mkdir '/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/.cache/logger'
- at Object.mkdirSync (node:fs:1382:3)
- at Object.e.exports.makeDirSync (/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/@umijs/utils/compiled/fs-extra/index.js:1:15306)
- at Object.<anonymous> (/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/@umijs/utils/dist/logger.js:69:27)
- at Module._compile (/home/jenkins/workspace/ask-sharelib-test/node_modules/v8-compile-cache/v8-compile-cache.js:192:30)
- at Object.Module._extensions..js (node:internal/modules/cjs/loader:1250:10)
- at Module.load (node:internal/modules/cjs/loader:1074:32)
- at Function.Module._load (node:internal/modules/cjs/loader:909:12)
- at Module.require (node:internal/modules/cjs/loader:1098:19)
- at require (/home/jenkins/workspace/ask-sharelib-test/node_modules/v8-compile-cache/v8-compile-cache.js:159:20)
- at Object.<anonymous> (/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/@umijs/utils/dist/index.js:109:22) {
- errno: -13,
- syscall: 'mkdir',
- code: 'EACCES',
- path: '/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/.cache/logger'
-}
-npm ERR! Lifecycle script `build` failed with error:
-npm ERR! Error: command failed
-npm ERR! in workspace: @myun/common-component@0.0.13
-npm ERR! at location: /home/jenkins/workspace/ask-sharelib-test/packages/common-component
-lerna ERR! npm run build exited 1 in '@myun/common-component'
-lerna WARN complete Waiting for 1 child process to exit. CTRL-C to exit immediately.
-
+```js
+// response header
+Content-Security-Policy: frame-ancestors 'none';
+X-Frame-Options: DENY  // 该页面不允许在 frame 中展示
+X-Frame-Options: SAMEORIGIN  //可以在相同域名页面的 frame 中展示
 ```
 
-node_modules/.cache/logger 写入没有权限
+## 微前端
 
-- 首先考虑提升角色权限
+解决的问题：
 
-```shell
-yarn install --unsafe-perm --allow-root
-```
+- 单个模块独立开发，测试，部署，不受影响
+- 允许不同的技术栈
+- 解决 iframe 硬隔离的问题：沙盒
 
-- father build 为啥要往 node_modules/.cache 文件中写入 logger 文件  
-  默认会在构建过程中将缓存文件放在该文件下，比如 logger 文件、webpack 缓存、mfsu 缓存等。
-- 考虑阻止写入 logger 文件，也就是跳过日志
-  在.fatherrc.ts 中配置以下,参考 webpack 配置：
-  ```js
-  import {} from '';
-  export default defined({
-    logger:{
-      level:'silent';
-    }
-  })
-  ```
-  但是报错，logger 配置没有开放出来
-- 还是考虑解决权限问题，最终由运维解决了
+方案：
 
-# 2022
+1. qiankun
+   路由匹配，加载文件，渲染到指定 container 中
+   沙箱：sandbox
+2. 无界 Micro-App (组件化思维)
+   通过 webComponent 动态加载子应用
+   attachShadow({ mode: "open" }) //开启影子 dom 也就是样式隔离
+   shadow.appendChild(template.content.cloneNode(true))
+   沙箱：iframe
+3. [webpack-module-federation](https://juejin.cn/post/7236021829000691771#heading-13)
+   需自己做沙箱、隔离
+
+优点：
+qiankun：
+
+- url 获取
+- 实现 js,css 隔离
+- 预加载，加速打开
+
+## pnpm
+
+- node_modules 下的依赖包指向 node_modules/.pnpm 中的文件，该文件文件名为寻址路径，指向 store 中的真实地址
+- node_modules 下只会出现 package.json 中申明的依赖项，以及版本
+- node_modules/.pnpm 下为平铺的所有依赖，虚拟存储目录
+- node_modules/.pnpm 中包的依赖项(次级依赖)与依赖包的实际位置位于同一目录级别
+
+## egg 中间件
+
+egg 基于 koa，洋葱模型，每写一个中间件相当于多包一层，按照堆栈的方式执行，处于 request 和 response 中间。
+继承了 koa 的基础对象(Application,Context,Request,Response)以及扩展的对象（Controller，Service，Helper，Config，Logger）
+事件：server(worker 中触发一次)，error，response，request
+
+## 正向代理和反向代理
+
+正向代理——代理客户端 访问本身不可访问的资源
+反向代理——代理服务器 负载均衡
 
 ## 命令行
 

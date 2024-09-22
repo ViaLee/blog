@@ -1,8 +1,14 @@
 # Flutter
 
+react
+虚拟 dom 和响应式编程（数据驱动视图变化）  
+rn
+javascriptcore
+
 ## 初识 flutter
 
-Flutter 是 Google 发布的一个用于创建跨平台、高性能移动应用的框架。拥有自己的 UI 系统布局，支持 iOS、Android、Web、Windows、macOS、Linux、Fuchsia（Google 新的自研操作系统）等众多平台。  
+Flutter 是 Google 发布的一个用于创建跨平台、高性能移动应用的框架。  
+拥有自己的 UI 系统布局，支持 iOS、Android、Web、Windows、macOS、Linux、Fuchsia（Google 新的自研操作系统）等众多平台。  
 Flutter 的 Release 包默认是使用 Dart AOT 模式编译的，所以不支持动态化，但 Dart 还有 JIT 或 snapshot 运行方式，这些模式都是支持动态化的。
 
 > 执行之前是否需要编译  
@@ -16,6 +22,10 @@ Flutter 的 Release 包默认是使用 Dart AOT 模式编译的，所以不支�
 2. 组件库易维护，UI 一致性高
 
 ![对比](./diff_dev.jpg)
+
+原生开发：
+Android 原生应用就是指使用 Java 或 Kotlin 语言直接调用 Android SDK 开发的应用程序；
+iOS 原生应用就是指通过 Objective-C 或 Swift 语言直接调用 iOS SDK 开发的应用程序。
 
 ### 框架结构
 

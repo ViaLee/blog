@@ -49,7 +49,64 @@ async：浏览器不会因 async 脚本而阻塞，脚本在文档中的顺序�
 
 ### 模块化规范
 
-#### **CJS**
+#### **AMD**
+
+异步模块，加载完执行回调函数
+
+```js
+// utils.js
+define([], function () {
+  return {
+    add: function (a, b) {
+      console.log(a, b);
+    },
+  };
+});
+// main.js 先加载utils,然后执行add
+require(["./utils"], function (utils) {
+  utils.add(1, 2);
+});
+```
+
+#### **CMD**
+
+按需加载
+
+```js
+define(function (require, exports, module) {
+  console.log(1);
+  if (false) {
+    var utils = require("./utils");
+    utils.add(1, 2);
+  }
+});
+```
+
+#### **UMD**
+
+兼容 AMD 和 CMD
+
+```js
+(function (root, factory) {
+  if (typeof define === "function" && define.amd) {
+    // AMD
+    define(["utils"], factory);
+  } else if (typeof exports === "object") {
+    // commonjs
+    let utils = require("utils");
+    module.exports = factory(utils);
+  } else {
+    // 都不是
+    root.result = factory(root.utils);
+  }
+})(this, function (utils) {
+  utils.add(1, 2);
+});
+```
+
+#### **CommonJS**
+
+避免全局变量污染，类似于命名空间
 
 1. 同步加载模块，运行时加载
 2. 每个 js 文件是一个模块，每个模块内部都有一个 module 变量，代表当前模块。 module.exports
@@ -89,6 +146,17 @@ require ={
 
 import 编译时加载，会优先执行（变量提升），是引用，是只读引用。也有缓存。
 
+```js
+export const utils = {
+  add: function (a, b) {
+    console.log(a + b);
+  },
+};
+
+import { utils } from "./utils";
+utils.add(1, 2);
+```
+
 #### **区别**
 
 通过上面我们对 CommonJS 规范和 ES6 规范的比较，我们总结一下两者的区别：
@@ -98,10 +166,6 @@ import 编译时加载，会优先执行（变量提升），是引用，是只�
 - CommonJS 加载的是整个模块，即将所有的方法全部加载进来，ES6 可以单独加载其中的某个方法
 - CommonJS 中 this 指向当前模块 module.exports，ES6 中 this 指向 undefined
 - CommonJS 默认非严格模式，ES6 的模块自动采用严格模式
-
-#### **UMD**
-
-兼容 CJS 和 EJS 的处理，判断支持哪种类型直接应用。
 
 ### 错误类型
 

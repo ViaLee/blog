@@ -92,6 +92,15 @@ module.exports = {
     search: true,
     sidebar: "auto", // 侧边栏配置
     sidebarDepth: 3, // 侧边栏显示2级
+
+    locales: {
+      "/": {
+        selectLanguageName: "English",
+      },
+      "/zh/": {
+        selectLanguageName: "简体中文",
+      },
+    },
   },
   theme: "@vuepress/default",
   plugins: {

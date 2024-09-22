@@ -2,16 +2,217 @@
 // error An unexpected error occurred: "https://r2.cnpmjs.org/rc-menu/-/rc-menu-9.1.1.tgz: unable to verify the first certificate".
  -->
 
-## 2023
+## 日常问题记录
 
-### 7/25 组件库发版 缓存问题
+<!-- ## 2023 -->
+
+### 组件库发布 t 环境构建失败
+
+组件库项目这个版本使用 lerna 进行了分包，并将 father 版本从 1^ 升至了 4^  
+发布时如下报错：
+
+```txt
++ npm run build:test
+
+> root@1.0.111 build:test
+> cross-env CROSS_ENV='t-' npm run build:cdn && npm run docs:build && npm run copyUmd
+
+npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+npm WARN logfile error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+npm WARN logfile errno: -13,
+npm WARN logfile code: 'EACCES',
+npm WARN logfile syscall: 'scandir',
+npm WARN logfile path: '/root/.npm/_logs'
+npm WARN logfile }
+
+> root@1.0.111 build:cdn
+> lerna run build
+
+lerna notice cli v4.0.0
+lerna info versioning independent
+lerna info ci enabled
+lerna info Executing command in 2 packages: "npm run build"
+lerna ERR! npm run build exited 1 in '@myun/common-component'
+lerna ERR! npm run build stdout:
+
+> @myun/common-component@0.0.13 build
+> father build
+
+lerna ERR! npm run build stderr:
+npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+npm WARN logfile error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+npm WARN logfile errno: -13,
+npm WARN logfile code: 'EACCES',
+npm WARN logfile syscall: 'scandir',
+npm WARN logfile path: '/root/.npm/_logs'
+npm WARN logfile }
+node:internal/fs/utils:347
+ throw err;
+ ^
+
+Error: EACCES: permission denied, mkdir '/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/.cache/logger'
+ at Object.mkdirSync (node:fs:1382:3)
+ at Object.e.exports.makeDirSync (/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/@umijs/utils/compiled/fs-extra/index.js:1:15306)
+ at Object.<anonymous> (/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/@umijs/utils/dist/logger.js:69:27)
+ at Module._compile (/home/jenkins/workspace/ask-sharelib-test/node_modules/v8-compile-cache/v8-compile-cache.js:192:30)
+ at Object.Module._extensions..js (node:internal/modules/cjs/loader:1250:10)
+ at Module.load (node:internal/modules/cjs/loader:1074:32)
+ at Function.Module._load (node:internal/modules/cjs/loader:909:12)
+ at Module.require (node:internal/modules/cjs/loader:1098:19)
+ at require (/home/jenkins/workspace/ask-sharelib-test/node_modules/v8-compile-cache/v8-compile-cache.js:159:20)
+ at Object.<anonymous> (/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/@umijs/utils/dist/index.js:109:22) {
+ errno: -13,
+ syscall: 'mkdir',
+ code: 'EACCES',
+ path: '/home/jenkins/workspace/ask-sharelib-test/packages/common-component/node_modules/.cache/logger'
+}
+npm ERR! Lifecycle script `build` failed with error:
+npm ERR! Error: command failed
+npm ERR! in workspace: @myun/common-component@0.0.13
+npm ERR! at location: /home/jenkins/workspace/ask-sharelib-test/packages/common-component
+lerna ERR! npm run build exited 1 in '@myun/common-component'
+lerna WARN complete Waiting for 1 child process to exit. CTRL-C to exit immediately.
+
+```
+
+node_modules/.cache/logger 写入没有权限
+
+- 首先考虑提升角色权限
+
+```shell
+yarn install --unsafe-perm --allow-root
+```
+
+- father build 为啥要往 node_modules/.cache 文件中写入 logger 文件  
+  默认会在构建过程中将缓存文件放在该文件下，比如 logger 文件、webpack 缓存、mfsu 缓存等。
+- 考虑阻止写入 logger 文件，也就是跳过日志
+  在.fatherrc.ts 中配置以下,参考 webpack 配置：
+  ```js
+  import {} from '';
+  export default defined({
+    logger:{
+      level:'silent';
+    }
+  })
+  ```
+  但是报错，logger 配置没有开放出来
+- 还是考虑解决权限问题，最终由运维解决了
+
+### lerna yarn 迁移为 pnpm
+
+创建 pnpm-workspace.yaml 文件
+
+```
+prefer-workspace-packages: true
+packages:
+  - 'packages/*'
+
+```
+
+创建.npmrc 文件,允许幽灵依赖访问其他依赖
+
+```
+shamefully-hoist=true
+```
+
+执行 pnpm i，根目录生成一个 pnpm-lock.yaml 文件，其中有根目录及所有包的依赖树
+
+### yarn 迁移为 pnpm
+
+使用 pnpm import pnpm-lock.yaml ，根据 yarn.lock 生成 pnpm-lock.yaml
+
+出现以下问题：
+
+1.webpack 版本冲突
+
+```shell
+
+There might be a problem with the project dependency tree.
+It is likely not a bug in Create React App, but something you need to fix locally.
+
+The react-scripts package provided by Create React App requires a dependency:
+
+  "webpack": "4.44.2"
+
+Don't try to install it manually: your package manager does it automatically.
+However, a different version of webpack was detected higher up in the tree:
+
+  /Users/vialee/gaodun/learn-platform.gaodun.com/node_modules/webpack (version: 5.89.0)
+
+Manually installing incompatible versions is known to cause hard-to-debug issues.
+
+If you would prefer to ignore this check, add SKIP_PREFLIGHT_CHECK=true to an .env file in your project.
+That will permanently disable this message but you might encounter other issues.
+
+To fix the dependency tree, try following the steps below in the exact order:
+
+  1. Delete package-lock.json (not package.json!) and/or yarn.lock in your project folder.
+  2. Delete node_modules in your project folder.
+  3. Remove "webpack" from dependencies and/or devDependencies in the package.json file in your project folder.
+  4. Run npm install or yarn, depending on the package manager you use.
+
+In most cases, this should be enough to fix the problem.
+If this has not helped, there are a few other things you can try:
+
+  5. If you used npm, install yarn (http://yarnpkg.com/) and repeat the above steps with it instead.
+     This may help because npm has known issues with package hoisting which may get resolved in future versions.
+
+  6. Check if /Users/vialee/gaodun/learn-platform.gaodun.com/node_modules/webpack is outside your project directory.
+     For example, you might have accidentally installed something in your home folder.
+
+  7. Try running npm ls webpack in your project folder.
+     This will tell you which other package (apart from the expected react-scripts) installed webpack.
+
+If nothing else helps, add SKIP_PREFLIGHT_CHECK=true to an .env file in your project.
+That would permanently disable this preflight check in case you want to proceed anyway.
+
+P.S. We know this message is long but please read the steps above :-) We hope you find them helpful!
+```
+
+分析： 一些依赖项对于 webpack 的版本以来不一致
+解决：统一 webpack 版本，升级 react-script (3->5)
+
+```json
+    "@craco/craco": "7.1.0",
+    "react-scripts": "5.0.1",
+```
+
+2.  node 20 使用 pnpm 7.30.5 出现以下 error，不管什么源。
+
+```
+ WARN  GET http://npm-service.gaodunwangxiao.com/create-react-app error (ERR_INVALID_THIS). Will retry in 1 minute. 1 retries left.
+```
+
+解决：降低 node 版本(16)或者升级 pnpm(8)
+
+3. 项目使用了 craco-fast-refresh ，官方建议使用 craV4 版本，但是项目之前使用的 V3，目前升级后是 V5 版本，所以会报错：
+
+   - 引用了 src 以外的资源
+   - 写法正确但报 'cannot read properties of undefined(reading module) webpack complied error'
+
+解决： 弃用这个插件，使用 cra 自带热更
+
+4.eslint react 冲突 ‘ERROR in Plugin "react" was conflicted between ".eslintrc.json" and "BaseConfig"’
+
+每次修改，热更后都报错，重新保存 package.json 就不报了
+
+解决：禁用 cra 自带的 eslint 启动项添加 DISABLE_ESLINT_PLUGIN=true 属性
+
+### 网页打印样式、调试
+
+css 分页： break-after
+调试打印样式：
+devtool command+shift+p rendering
+选择 emulate css media type print
+
+### 组件库发版 缓存问题
 
 背景：业务组件库打包成 umd 并放在 oss 服务器上存储，工作台项目通过 cdn 获取该打包结果，并用其提供的业务组件配置页面保存后发布该页面，在用户端即可访问配置的页面。  
 问题：get 请求缓存。组件库发版后，用户访问的页面组件并没有更新。  
 解决：因此目前解决方案是在配置页面时请求 umd 地址后加一个版本号，每次都得手动修改，从而使用户端发送最新版本的请求。  
 问题：cdn 缓存。cdn 接收到客户端发送来的请求，如果该版本本地已经存在，则直接返回，如果不存在，则请求存储服务器获取最新的资源。 除此之外 cdn 也会定期拉取。
 
-### 7/18 给高度 auto 的 dom 动画过渡
+### 给高度 auto 的 dom 动画过渡
 
 好奇 ant-collapse 的展开收起动画效果怎么做的，内容自适应
 
@@ -25,7 +226,7 @@ div {
 }
 ```
 
-### 7/10 浏览器非激活状态 setInterval、setTimeout 会停止运行
+### 浏览器非激活状态 setInterval、setTimeout 会停止运行
 
 浏览器优化策略，非激活状态的
 
@@ -75,7 +276,7 @@ onmessage = function (e) {
 2. window.onFocus 切回来重新调接口获取最新时间
    window.onFocus 小屏切换也会触发，只要页面被聚焦
 
-### 6/15 源码 map 文件请求混杂报错
+### 源码 map 文件请求混杂报错
 
 和打包开启源文件有关
 
@@ -83,7 +284,7 @@ onmessage = function (e) {
 url = /web/exam/answer_sheet/runtime-header.83184b99.js.map
 ```
 
-### 5/30 css 梯形
+### css 梯形
 
 ```css
 .trapezoid {
@@ -98,7 +299,7 @@ clip-path polygon 的值是左上角顺时针四个角，横纵坐标的值，�
 
 <!-- ### 05/30 CSS 最后一个类元素 -->
 
-### 05/29 根据图片主色调设置 dom 背景色
+### 根据图片主色调设置 dom 背景色
 
 UI 说 文字背景色要根据上方图片主色调自动设置  
 查阅了一圈发现两个办法：
@@ -119,7 +320,7 @@ UI 说 文字背景色要根据上方图片主色调自动设置
   1. 需要处理数据多的情况 JS 遍历的数组多且长，消耗性能，也有优化将图片缩小后拿缩略图统计，但个人还是不喜欢 JS 处理
   2. 将 dom 放大 60 倍也可能有些问题，且实际效果没有 JS 统计精准，但目前使用的是该方法
 
-### 05/17 服务器被挖
+### 服务器被挖
 
 同事发现他的腾讯云服务器运行超级慢，啥也没干 CPU 占满了，然后使用
 
@@ -148,7 +349,7 @@ echo $a #输出a
 
 根据 docker 镜像管理工具显示，是镜像运行过程中执行了一段脚本，且采用的静默模式。
 
-### 05/17 本地资源模拟测试环境资源
+### 本地资源模拟测试环境资源
 
 1. 将本地服务转 https，端口使用 443 默认端口，避免端口不一致导致的跨域问题.
 
@@ -167,11 +368,11 @@ http-server --cors # 将服务启用为允许所有源
    直接访问该地址，提示安全，点击继续访问后，不报错了。
 4. 访问默认端口，Request failed to proxy: ECONNREFUSED，原因也是 3
 
-### 05/15 组件库发布 t 环境构建失败
+### 组件库发布 t 环境构建失败
 
 从 gitlab 构建日志分析得出，是写入日志时没有权限。[详情](/pages/blog.html)
 
-### 05/10 离开页面埋点
+### 离开页面埋点
 
 写在 beforeUnload 回调里，取消默认事件离开页面会提示用户是否确认离开
 
@@ -184,7 +385,7 @@ window.addEventListener("beforeunload", (event) => {
 });
 ```
 
-### 04/20 协助 App 解决问题
+### 协助 App 解决问题
 
 #### 内嵌 H5 页面获取 app 的 token，首次未获取到
 
@@ -199,7 +400,7 @@ window.addEventListener("beforeunload", (event) => {
 - 区分环境
 - 跳转 URL Schema
 
-### 04/19 egg 混合 react 页面项目
+### egg 混合 react 页面项目
 
 老项目采用 egg、jquery 开发、部分页面采用 react 重构、目前方案是将新页面放在一个 react 项目内打包放在老项目里，路由直接读取打包后的产物，问题：
 
@@ -229,7 +430,7 @@ window.addEventListener("beforeunload", (event) => {
 3. antd 全局样式污染问题  
    没有发现好的解决办法、暂时通过覆盖解决
 
-### 04/14 Error TS1110 Build: Type expected
+### Error TS1110 Build: Type expected
 
 ![tserror](./tserror.jpg)
 
@@ -240,7 +441,7 @@ ts 版本过低,缺少部分类型定义,升级
 "typescript": "4.2.4",
 ```
 
-### 02/21 系统升级为 macOS Ventura
+### 系统升级为 macOS Ventura
 
 拉 git 项目报错， no matching host key type found.  
 解决：  
@@ -256,7 +457,7 @@ ts 版本过低,缺少部分类型定义,升级
 <!-- ### 视频水印 -->
 <!-- canvas 定位文字，生成图片，放在video同级，用mutationObserve监听dom变化、属性变化，水印被删除时再生成一张 -->
 
-### 02/02 taro 项目编译 h5 白屏
+### taro 项目编译 h5 白屏
 
 1. 部分安卓手机 UC 浏览器、苹果 safri 浏览器页面白屏；
    本地启动真机访问无异常  
@@ -276,7 +477,7 @@ ts 版本过低,缺少部分类型定义,升级
 3. 编译报错，sass 中不支持/运算  
    打补丁，单独处理
 
-## 2022
+<!-- ## 2022 -->
 
 ### eslint 报错 忽略
 

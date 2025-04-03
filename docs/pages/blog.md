@@ -1,3 +1,7 @@
+## blender
+
+建模动画练习： [入门作品](https://www.bilibili.com/video/BV1hctXecEmv/?share_source=copy_web&vd_source=af2408372a66189077d3783af4220080)
+
 ## iframe 限制嵌套
 
 防止点击劫持

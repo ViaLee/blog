@@ -2,6 +2,16 @@
 
 ## 基础
 
+### 数组方法
+
+- 返回原数组，就地修改
+  sort() reverse() fill() copyWithin()
+  const result = arr.sort();
+- 返回新数组
+  map() filter() reduce() slice() concat() flat()
+- 仅修改数组 但不返回
+  pop() push() shift() unshift() splice()
+
 ### Reflect
 
 - Reflect 暴露语言内部方法

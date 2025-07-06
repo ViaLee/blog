@@ -11,6 +11,74 @@
   map() filter() reduce() slice() concat() flat()
 - 仅修改数组 但不返回
   pop() push() shift() unshift() splice()
+  其他 join()
+
+### 浅拷贝
+
+只复制对象的第一层属性
+
+- object.assign() 所有可枚举对象
+  修改嵌套对象，相互影响
+- ... 运算
+  它不复制继承的属性或类的属性，但是它会复制 ES6 的 symbols 属性。
+
+### new
+
+- new obj = {} 创建对象
+- obj.**proto** = constructor.prototype
+- this = obj
+- return obj
+
+### for...in 遍历对象
+
+包括继承的可枚举值
+
+### 使用 for...of 遍历对象 迭代器
+
+生成器函数
+
+```js
+const obj = { a: 1, b: 2, c: 3 };
+obj[Symbol.iterator] = function* iterator() {
+  const keys = Object.keys(obj);
+  for (var k of keys) {
+    yield [k, obj[k]];
+  }
+};
+```
+
+### AJAX
+
+```js
+const SERVER_URL = "http://example.com/api";
+let xhr = new XMLHttpRequest();
+xhr.open("GET", SERVER_URL, true);
+xhr.onreadystatechange = () => {
+  // 状态监听函数
+  if (xhr.readyState === 4) {
+    //
+  }
+};
+
+// 获取加载进度
+// 一.
+xhr.onprogress = (e) => {
+  console.log(e.loaded, e.total);
+};
+// 二.
+const resp = fetch(SERVER_URL, { method: "GET", body: data });
+const total = resp.headers.get("Content-Length");
+// resp.body 是 ReadableStream 对象
+const reader = resp.body.getReader();
+const loaded = 0;
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) {
+    break;
+  }
+  loaded += value.length;
+}
+```
 
 ### Reflect
 
